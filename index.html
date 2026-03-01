@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛶 Latvijas Ūdens Līmeņi — Kayak Map</title>
+    <meta name="description" content="Interaktīva karte ar Latvijas upju ūdens līmeņiem kajakistiem. Dati no LVĢMC.">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0e1a;
+            color: #e0e6f0;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* ── Header ── */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: linear-gradient(135deg, #0f1629 0%, #1a1f3a 100%);
+            border-bottom: 1px solid rgba(99, 179, 237, 0.15);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-logo {
+            font-size: 28px;
+            line-height: 1;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #63b3ed, #4fd1c5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.3px;
+        }
+
+        .header-subtitle {
+            font-size: 11px;
+            color: rgba(160, 174, 192, 0.8);
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .stat-badge {
+            background: rgba(99, 179, 237, 0.1);
+            border: 1px solid rgba(99, 179, 237, 0.2);
+            border-radius: 20px;
+            padding: 5px 14px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #90cdf4;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-badge:hover {
+            background: rgba(99, 179, 237, 0.18);
+            border-color: rgba(99, 179, 237, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .stat-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #48bb78;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* ── Map ── */
+        #map {
+            position: fixed;
+            top: 62px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1;
+        }
+
+        /* ── Custom Leaflet Markers ── */
+        .custom-marker {
+            position: relative;
+        }
+
+        .marker-pin {
+            width: 28px;
+            height: 36px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 3px 6px rgba(0,0,0,0.35));
+            transition: transform 0.2s ease, filter 0.2s ease;
+            cursor: pointer;
+        }
+
+        .marker-pin:hover {
+            transform: scale(1.2) translateY(-3px);
+            filter: drop-shadow(0 6px 12px rgba(0,0,0,0.5));
+        }
+
+        .marker-pin svg {
+            width: 28px;
+            height: 36px;
+        }
+
+        /* ── Leaflet Popup Overrides ── */
+        .leaflet-popup-content-wrapper {
+            background: linear-gradient(145deg, #1a2038, #141829) !important;
+            border: 1px solid rgba(99, 179, 237, 0.2) !important;
+            border-radius: 16px !important;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(99, 179, 237, 0.08) !important;
+            padding: 0 !important;
+            overflow: hidden;
+        }
+
+        .leaflet-popup-content {
+            margin: 0 !important;
+            width: 280px !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+
+        .leaflet-popup-tip {
+            background: #1a2038 !important;
+            border: 1px solid rgba(99, 179, 237, 0.2) !important;
+            box-shadow: none !important;
+        }
+
+        .leaflet-popup-close-button {
+            color: #a0aec0 !important;
+            font-size: 20px !important;
+            padding: 6px 10px !important;
+            z-index: 10;
+        }
+
+        .leaflet-popup-close-button:hover {
+            color: #e2e8f0 !important;
+        }
+
+        /* ── Popup Card ── */
+        .popup-card {
+            padding: 0;
+        }
+
+        .popup-header {
+            background: linear-gradient(135deg, rgba(99, 179, 237, 0.15), rgba(79, 209, 197, 0.1));
+            padding: 16px 18px 12px;
+            border-bottom: 1px solid rgba(99, 179, 237, 0.1);
+        }
+
+        .popup-river {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #63b3ed;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .popup-station {
+            font-size: 16px;
+            font-weight: 700;
+            color: #e2e8f0;
+            letter-spacing: -0.3px;
+        }
+
+        .popup-hero {
+            padding: 18px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.15);
+        }
+
+        .popup-hero-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #a0aec0;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .popup-hero-value {
+            font-size: 42px;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 2px;
+        }
+
+        .popup-hero-value .unit {
+            font-size: 20px;
+            font-weight: 400;
+            color: #a0aec0;
+        }
+
+        .popup-hero-value.positive {
+            color: #4fd1c5;
+        }
+
+        .popup-hero-value.negative {
+            color: #fc8181;
+        }
+
+        .popup-hero-meters {
+            font-size: 13px;
+            color: #718096;
+            font-weight: 400;
+        }
+
+        .popup-details {
+            padding: 14px 18px;
+        }
+
+        .popup-detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .popup-detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .popup-detail-label {
+            font-size: 12px;
+            color: #718096;
+            font-weight: 400;
+        }
+
+        .popup-detail-value {
+            font-size: 12px;
+            color: #cbd5e0;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .popup-footer {
+            padding: 10px 18px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .popup-timestamp {
+            font-size: 10px;
+            color: #4a5568;
+            text-align: center;
+            font-weight: 400;
+        }
+
+        .popup-warning {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .warning-good { background: rgba(72, 187, 120, 0.15); color: #68d391; }
+        .warning-yellow { background: rgba(236, 201, 75, 0.15); color: #ecc94b; }
+        .warning-red { background: rgba(252, 129, 129, 0.15); color: #fc8181; }
+
+        /* ── Loading overlay ── */
+        .loading-overlay {
+            position: fixed;
+            top: 62px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 14, 26, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(99, 179, 237, 0.15);
+            border-top-color: #63b3ed;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 14px;
+            color: #a0aec0;
+            font-weight: 400;
+        }
+
+        /* ── Error message ── */
+        .error-banner {
+            position: fixed;
+            top: 72px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1001;
+            background: rgba(252, 129, 129, 0.15);
+            border: 1px solid rgba(252, 129, 129, 0.3);
+            border-radius: 12px;
+            padding: 12px 20px;
+            color: #feb2b2;
+            font-size: 13px;
+            display: none;
+            backdrop-filter: blur(10px);
+        }
+
+        /* ── Attribution override ── */
+        .leaflet-control-attribution {
+            background: rgba(26, 31, 58, 0.85) !important;
+            color: #718096 !important;
+            backdrop-filter: blur(10px);
+            border-radius: 4px 0 0 0 !important;
+        }
+
+        .leaflet-control-attribution a {
+            color: #63b3ed !important;
+        }
+
+        /* ── Zoom controls ── */
+        .leaflet-control-zoom a {
+            background: rgba(26, 31, 58, 0.9) !important;
+            color: #90cdf4 !important;
+            border: 1px solid rgba(99, 179, 237, 0.2) !important;
+            backdrop-filter: blur(10px);
+        }
+
+        .leaflet-control-zoom a:hover {
+            background: rgba(99, 179, 237, 0.15) !important;
+            color: #bee3f8 !important;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 600px) {
+            .header {
+                padding: 10px 14px;
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
+
+            .header-title {
+                font-size: 15px;
+            }
+
+            .header-stats {
+                width: 100%;
+            }
+
+            .stat-badge {
+                font-size: 11px;
+                padding: 4px 10px;
+            }
+
+            #map {
+                top: 96px;
+            }
+
+            .leaflet-popup-content {
+                width: 250px !important;
+            }
+
+            .popup-hero-value {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="header-left">
+            <span class="header-logo">🛶</span>
+            <div>
+                <div class="header-title">Latvijas Ūdens Līmeņi</div>
+                <div class="header-subtitle">Hidroloģiskie dati kajakistiem</div>
+            </div>
+        </div>
+        <div class="header-stats">
+            <div class="stat-badge">
+                <span class="stat-dot"></span>
+                <span id="station-count">— stacijas</span>
+            </div>
+            <div class="stat-badge" id="update-badge">
+                <span>⏱</span>
+                <span id="last-updated">Ielādē...</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Ielādē ūdens līmeņu datus...</div>
+    </div>
+
+    <!-- Error Banner -->
+    <div class="error-banner" id="error-banner"></div>
+
+    <!-- Map -->
+    <div id="map"></div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <script>
+        // ── Map Initialization ──
+        const map = L.map('map', {
+            center: [56.95, 24.5],
+            zoom: 7,
+            minZoom: 6,
+            maxZoom: 16,
+            zoomControl: true
+        });
+
+        // Dark-themed map tiles (CartoDB Dark Matter)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a> | Dati: <a href="https://videscentrs.lvgmc.lv">LVĢMC</a>',
+            subdomains: 'abcd',
+            maxZoom: 19
+        }).addTo(map);
+
+        // ── SVG Marker Icon Factory ──
+        function createMarkerIcon(color = '#e53e3e') {
+            const svgIcon = `
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 36">
+                    <defs>
+                        <linearGradient id="pin-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:${color};stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:${adjustColor(color, -30)};stop-opacity:1" />
+                        </linearGradient>
+                        <filter id="pin-shadow" x="-20%" y="-10%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.3"/>
+                        </filter>
+                    </defs>
+                    <path d="M14 0C6.268 0 0 6.268 0 14c0 10.5 14 22 14 22s14-11.5 14-22C28 6.268 21.732 0 14 0z"
+                          fill="url(#pin-grad)" filter="url(#pin-shadow)"/>
+                    <circle cx="14" cy="13" r="6" fill="rgba(255,255,255,0.9)"/>
+                    <circle cx="14" cy="13" r="3.5" fill="${color}"/>
+                </svg>`;
+
+            return L.divIcon({
+                html: `<div class="marker-pin">${svgIcon}</div>`,
+                className: 'custom-marker',
+                iconSize: [28, 36],
+                iconAnchor: [14, 36],
+                popupAnchor: [0, -36]
+            });
+        }
+
+        function adjustColor(hex, amount) {
+            hex = hex.replace('#', '');
+            let r = Math.max(0, Math.min(255, parseInt(hex.substr(0, 2), 16) + amount));
+            let g = Math.max(0, Math.min(255, parseInt(hex.substr(2, 2), 16) + amount));
+            let b = Math.max(0, Math.min(255, parseInt(hex.substr(4, 2), 16) + amount));
+            return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+        }
+
+        // ── Popup HTML Generator ──
+        function createPopupHTML(station, lastUpdated) {
+            const depth = station.actual_depth_cm;
+            const depthClass = depth >= 0 ? 'positive' : 'negative';
+            const depthM = station.actual_depth_m.toFixed(2);
+
+            // Warning level badge
+            const warningMap = {
+                'good': { class: 'warning-good', label: 'Norma' },
+                'yellow': { class: 'warning-yellow', label: 'Uzmanību' },
+                'red': { class: 'warning-red', label: 'Bīstami' },
+            };
+            const warning = warningMap[station.warning_level] || warningMap['good'];
+
+            // Forecast info
+            let forecastHTML = '';
+            if (station.forecast_median != null) {
+                const fmDepth = station.forecast_median_depth != null
+                    ? `${station.forecast_median_depth.toFixed(2)} m`
+                    : '—';
+                forecastHTML += `
+                    <div class="popup-detail-row">
+                        <span class="popup-detail-label">Prognozes med.</span>
+                        <span class="popup-detail-value">${station.forecast_median.toFixed(3)} m (${fmDepth})</span>
+                    </div>`;
+            }
+            if (station.forecast_low != null && station.forecast_high != null) {
+                forecastHTML += `
+                    <div class="popup-detail-row">
+                        <span class="popup-detail-label">Prognozes ampl.</span>
+                        <span class="popup-detail-value">${station.forecast_low.toFixed(2)} – ${station.forecast_high.toFixed(2)} m</span>
+                    </div>`;
+            }
+
+            return `
+                <div class="popup-card">
+                    <div class="popup-header">
+                        <div class="popup-river">${escapeHtml(station.river)}</div>
+                        <div class="popup-station">${escapeHtml(station.name)}</div>
+                    </div>
+                    <div class="popup-hero">
+                        <div class="popup-hero-label">Ūdens dziļums</div>
+                        <div class="popup-hero-value ${depthClass}">
+                            ${depth}<span class="unit"> cm</span>
+                        </div>
+                        <div class="popup-hero-meters">${depthM} m</div>
+                    </div>
+                    <div class="popup-details">
+                        <div class="popup-detail-row">
+                            <span class="popup-detail-label">Novērojums</span>
+                            <span class="popup-detail-value">${station.current_observation.toFixed(3)} m</span>
+                        </div>
+                        <div class="popup-detail-row">
+                            <span class="popup-detail-label">Nulles atzīme</span>
+                            <span class="popup-detail-value">${station.elevation.toFixed(2)} m</span>
+                        </div>
+                        ${forecastHTML}
+                        <div class="popup-detail-row">
+                            <span class="popup-detail-label">Statuss</span>
+                            <span class="popup-warning ${warning.class}">${warning.label}</span>
+                        </div>
+                    </div>
+                    <div class="popup-footer">
+                        <div class="popup-timestamp">
+                            Dati: ${station.observation_date || '—'} · Atjaunots: ${lastUpdated}
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text || '';
+            return div.innerHTML;
+        }
+
+        // ── Data Loading ──
+        async function loadData() {
+            const loading = document.getElementById('loading');
+            const errorBanner = document.getElementById('error-banner');
+
+            try {
+                const response = await fetch('data.json');
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+
+                // Update header stats
+                document.getElementById('station-count').textContent =
+                    `${data.station_count} stacijas`;
+
+                const updatedDate = new Date(data.last_updated);
+                const formattedDate = updatedDate.toLocaleDateString('lv-LV', {
+                    year: 'numeric', month: '2-digit', day: '2-digit',
+                    hour: '2-digit', minute: '2-digit'
+                });
+                document.getElementById('last-updated').textContent = formattedDate;
+
+                const redIcon = createMarkerIcon('#e53e3e');
+
+                // Add markers for each station
+                data.stations.forEach(station => {
+                    if (station.lat == null || station.lon == null) return;
+
+                    const marker = L.marker([station.lat, station.lon], {
+                        icon: redIcon,
+                        title: station.display_name
+                    }).addTo(map);
+
+                    marker.bindPopup(
+                        createPopupHTML(station, formattedDate),
+                        { maxWidth: 300, className: '' }
+                    );
+                });
+
+                // Hide loading overlay
+                loading.classList.add('hidden');
+                setTimeout(() => { loading.style.display = 'none'; }, 500);
+
+            } catch (error) {
+                console.error('Failed to load data:', error);
+                loading.classList.add('hidden');
+                errorBanner.style.display = 'block';
+                errorBanner.textContent = `⚠ Neizdevās ielādēt datus: ${error.message}`;
+            }
+        }
+
+        // ── Initialize ──
+        loadData();
+    </script>
+</body>
+</html>
