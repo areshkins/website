@@ -140,10 +140,12 @@
             </svg>`;
 
         // Add river shapes to the map
+        const riverLayersByName = {};
+
         fetch('rivers.geojson')
             .then(res => res.json())
             .then(geojsonData => {
-                L.geoJSON(geojsonData, {
+                const geoJsonLayer = L.geoJSON(geojsonData, {
                     style: {
                         color: '#3182ce',
                         weight: 2,
@@ -155,11 +157,26 @@
                         const riverName = feature.properties.name || 'Upe';
                         layer.bindTooltip(riverName, { sticky: true });
 
+                        if (!riverLayersByName[riverName]) {
+                            riverLayersByName[riverName] = [];
+                        }
+                        riverLayersByName[riverName].push(layer);
+
                         layer.on('mouseover', () => {
-                            layer.setStyle({ color: '#2b6cb0', weight: 4, opacity: 0.9 });
+                            if (riverLayersByName[riverName]) {
+                                riverLayersByName[riverName].forEach(l => {
+                                    l.setStyle({ color: '#2b6cb0', weight: 4, opacity: 0.9 });
+                                    if (l !== layer) l.openTooltip(); // Also show tooltip for other segments
+                                });
+                            }
                         });
                         layer.on('mouseout', () => {
-                            layer.setStyle({ color: '#3182ce', weight: 2, opacity: 0.6 });
+                            if (riverLayersByName[riverName]) {
+                                riverLayersByName[riverName].forEach(l => {
+                                    l.setStyle({ color: '#3182ce', weight: 2, opacity: 0.6 });
+                                    if (l !== layer) l.closeTooltip();
+                                });
+                            }
                         });
                     }
                 }).addTo(map);
