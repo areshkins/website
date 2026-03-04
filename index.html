@@ -33,11 +33,14 @@
             justify-content: center;
             cursor: pointer;
             filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.5));
-            transition: transform 0.2s ease;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
         }
 
-        .marker-pin:hover {
-            transform: scale(1.1) translateY(-2px);
+        .marker-pin.is-hovered {
+            transform: scale(1.4) translateY(-5px);
+            filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.4));
+            z-index: 2000;
         }
 
         /* Popup Styling */
@@ -130,19 +133,38 @@
             attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
         }).addTo(map);
 
-        const svgIcon = `
+        const svgIcon = (color = "#4fd1c5") => `
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 36">
-                <path d="M14 0C6.268 0 0 6.268 0 14c0 10.5 14 22 14 22s14-11.5 14-22C28 6.268 21.732 0 14 0z" fill="#4fd1c5"/>
+                <path d="M14 0C6.268 0 0 6.268 0 14c0 10.5 14 22 14 22s14-11.5 14-22C28 6.268 21.732 0 14 0z" fill="${color}"/>
                 <circle cx="14" cy="13" r="4" fill="#fff"/>
             </svg>`;
 
-        const customIcon = L.divIcon({
-            html: `<div class="marker-pin">${svgIcon}</div>`,
-            className: 'custom-marker',
-            iconSize: [28, 36],
-            iconAnchor: [14, 36],
-            popupAnchor: [0, -36]
-        });
+        // Add river shapes to the map
+        fetch('rivers.geojson')
+            .then(res => res.json())
+            .then(geojsonData => {
+                L.geoJSON(geojsonData, {
+                    style: {
+                        color: '#3182ce',
+                        weight: 2,
+                        opacity: 0.6,
+                        lineCap: 'round',
+                        lineJoin: 'round'
+                    },
+                    onEachFeature: (feature, layer) => {
+                        const riverName = feature.properties.name || 'Upe';
+                        layer.bindTooltip(riverName, { sticky: true });
+
+                        layer.on('mouseover', () => {
+                            layer.setStyle({ color: '#2b6cb0', weight: 4, opacity: 0.9 });
+                        });
+                        layer.on('mouseout', () => {
+                            layer.setStyle({ color: '#3182ce', weight: 2, opacity: 0.6 });
+                        });
+                    }
+                }).addTo(map);
+            })
+            .catch(err => console.error("Kļūda ielādējot rivers.geojson:", err));
 
         fetch('data.json')
             .then(res => res.json())
@@ -164,9 +186,28 @@
                         <div class="popup-footer">Atjaunots no LVĢMC: ${time}</div>
                     `;
 
-                    L.marker([station.lat, station.lon], { icon: customIcon })
+                    const customIcon = L.divIcon({
+                        html: `<div class="marker-pin">${svgIcon()}</div>`,
+                        className: 'custom-marker',
+                        iconSize: [28, 36],
+                        iconAnchor: [14, 36],
+                        popupAnchor: [0, -36]
+                    });
+
+                    const marker = L.marker([station.lat, station.lon], { icon: customIcon })
                         .bindPopup(popupHTML)
                         .addTo(map);
+
+                    // Hover interactivity: make marker bigger
+                    marker.on('mouseover', function (e) {
+                        const el = this.getElement().querySelector('.marker-pin');
+                        el.classList.add('is-hovered');
+                    });
+
+                    marker.on('mouseout', function (e) {
+                        const el = this.getElement().querySelector('.marker-pin');
+                        el.classList.remove('is-hovered');
+                    });
                 });
             })
             .catch(err => console.error("Kļūda ielādējot data.json:", err));

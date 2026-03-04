@@ -25,6 +25,11 @@ def scrape_url():
         if lat is None or lon is None:
             continue
             
+        # Filter out stations in the sea or gulf
+        if "Baltijas jūra" in name or "Rīgas līcis" in name:
+            print(f"   Skipping coastal station: {name}")
+            continue
+            
         print(f"   Analyzing station: {name}")
         
         # Initialize default None values
