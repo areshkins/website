@@ -15,8 +15,8 @@
         body {
             margin: 0;
             font-family: 'Inter', sans-serif;
-            background: #0a0e1a;
-            color: #e0e6f0;
+            background: #f4f7f6;
+            color: #2d3748;
         }
 
         #map {
@@ -42,12 +42,12 @@
 
         /* Popup Styling */
         .leaflet-popup-content-wrapper {
-            background: linear-gradient(145deg, #1a2038, #141829);
-            border: 1px solid rgba(99, 179, 237, 0.2);
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
             border-radius: 12px;
             overflow: hidden;
             padding: 0;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
         .leaflet-popup-content {
@@ -56,37 +56,37 @@
         }
 
         .leaflet-popup-tip {
-            background: #141829;
+            background: #ffffff;
         }
 
         /* Popup Structure */
         .popup-header {
-            background: rgba(99, 179, 237, 0.15);
+            background: #edf2f7;
             padding: 12px 16px;
             font-size: 16px;
             font-weight: 700;
-            color: #e2e8f0;
+            color: #2d3748;
             text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid #e2e8f0;
         }
 
         .popup-main {
             padding: 16px;
             text-align: center;
-            background: rgba(0, 0, 0, 0.2);
+            background: #ffffff;
         }
 
         .popup-main-stat {
             font-size: 48px;
             font-weight: 700;
-            color: #4fd1c5;
+            color: #319795;
             line-height: 1;
             margin-bottom: 4px;
         }
 
         .popup-main-unit {
             font-size: 20px;
-            color: #a0aec0;
+            color: #718096;
             font-weight: 400;
         }
 
@@ -95,24 +95,24 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid #e2e8f0;
             font-size: 14px;
         }
 
         .popup-sub-label {
-            color: #a0aec0;
+            color: #4a5568;
         }
 
         .popup-sub-value {
             font-weight: 600;
-            color: #f6ad55;
+            color: #dd6b20;
         }
 
         .popup-footer {
-            background: rgba(0, 0, 0, 0.4);
+            background: #f8fafc;
             padding: 8px 16px;
             font-size: 11px;
-            color: #718096;
+            color: #a0aec0;
             text-align: center;
         }
     </style>
@@ -126,7 +126,7 @@
     <script>
         const map = L.map('map').setView([57.0, 24.5], 7);
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
         }).addTo(map);
 

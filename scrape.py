@@ -1,85 +1,71 @@
 import json
 import requests
-import re
-from bs4 import BeautifulSoup
 from datetime import datetime
 
-TARGET_URL = "https://videscentrs.lvgmc.lv/iebuvets/hidrologiska-operativa-informacija"
+TARGET_URL = "https://videscentrs.lvgmc.lv/data/hymer_overview"
 # Defining the targeted stations and their rough coordinates for Leaflet map mapping.
 STATIONS = [
-    {"name": "Amata-Melturi", "lat": 57.2273, "lon": 25.2263},
-    {"name": "Salaca-Mazsalaca", "lat": 57.8643, "lon": 25.0454},
-    {"name": "Svēte-Ūziņi", "lat": 56.5492, "lon": 23.5510}
+    {"name": "Amata, Melturi", "display_name": "Amata-Melturi", "lat": 57.2273, "lon": 25.2263},
+    {"name": "Salaca, Mazsalaca", "display_name": "Salaca-Mazsalaca", "lat": 57.8643, "lon": 25.0454},
+    {"name": "Svēte, Ūziņi", "display_name": "Svēte-Ūziņi", "lat": 56.5492, "lon": 23.5510}
 ]
-
-def clean_text(text):
-    return text.strip().replace('\xa0', ' ')
 
 def scrape_url():
     """
-    Fetches the HTML, and attempts to extract the required data using BeautifulSoup
-    and Regex, searching for the specific data labels given.
+    Fetches the JSON API, and attempts to extract the required data for the stations.
     """
     print(f"🌊 Fetching data from: {TARGET_URL}")
-    response = requests.get(TARGET_URL, headers={"User-Agent": "Mozilla/5.0"})
+    response = requests.get(TARGET_URL, headers={"User-Agent": "Mozilla/5.0"}, timeout=15)
     response.raise_for_status()
 
-    html = response.text
-    soup = BeautifulSoup(html, "html.parser")
+    # The new API provides a list of dictionary objects
+    data = response.json()
     
-    # We will attempt to parse the raw HTML text to find the data dictionary or XHR JSON.
-    # If the page includes the data rendered in HTML:
     results = []
     
     for station in STATIONS:
         station_name = station["name"]
-        print(f"   Analyzing station: {station_name}")
-        
-        # We look for the station name in the document
-        station_node = soup.find(string=re.compile(station_name))
+        display_name = station["display_name"]
+        print(f"   Analyzing station: {display_name}")
         
         # Initialize default None values
         actual_depth = None
         water_temp = None
         update_time = None
         
-        if station_node:
-            # We assume the information is stored in the parent container
-            container = station_node.find_parent("div") or station_node.find_parent("tr")
-            if container:
-                text_content = clean_text(container.get_text())
-                
-                # Actual Kayaking Depth
-                depth_match = re.search(r"Ūdens līmenis virs stacijas nulles atzīmes:\s*([-\d.]+)\s*m", text_content)
-                if depth_match:
-                    actual_depth = float(depth_match.group(1))
-                    
-                # Water Temperature
-                temp_match = re.search(r"Ūdens temperatūra:\s*([-\d.]+)\s*°C", text_content)
-                if temp_match:
-                    water_temp = float(temp_match.group(1))
-                    
-                # Latest Update Time
-                time_match = re.search(r"Dati par\s+(\d{2}\.\d{2}\.\d{4} \d{2}:\d{2})", text_content)
-                if time_match:
-                    update_time = time_match.group(1)
+        # Find the station in the API response
+        station_data = next((item for item in data if item.get("name") == station_name), None)
         
-        # Fallback: Extract XHR JSON dictionary if embedded in a <script> tag:
-        if actual_depth is None or water_temp is None:
-            json_match = re.search(r"var data = (\{.*?\});", html, re.DOTALL)
-            if json_match:
-                try:
-                    data_dict = json.loads(json_match.group(1))
-                    for item in data_dict.get("stations", []):
-                        if station_name in item.get("name", ""):
-                            actual_depth = item.get("depth", actual_depth)
-                            water_temp = item.get("temp", water_temp)
-                            update_time = item.get("time", update_time)
-                except json.JSONDecodeError:
-                    pass
+        if station_data:
+            # We look for "Ūdens līmenis" and "Ūdens temperatūra" in the 'ts' (time series) array
+            time_series = station_data.get("ts", [])
+            for ts in time_series:
+                ts_name = ts.get("name", "")
+                if ts_name == "Ūdens līmenis":
+                    try:
+                        actual_depth = float(ts.get("value"))
+                        # Use the timestamp from the depth reading
+                        # E.g. "2026-03-04 19:20:00" -> format if needed, but string works well
+                        last_dt = ts.get("last_date", "")
+                        if last_dt:
+                            # Try formatting to the old format if we want consistency: "DD.MM.YYYY HH:MM"
+                            try:
+                                dt = datetime.strptime(last_dt, "%Y-%m-%d %H:%M:%S")
+                                update_time = dt.strftime("%d.%m.%Y %H:%M")
+                            except ValueError:
+                                update_time = last_dt
+                    except (ValueError, TypeError):
+                        pass
+                elif ts_name == "Ūdens temperatūra":
+                    try:
+                        water_temp = float(ts.get("value"))
+                    except (ValueError, TypeError):
+                        pass
+        else:
+            print(f"   ⚠️ Station '{station_name}' not found in API response.")
         
         results.append({
-            "name": station_name,
+            "name": display_name,
             "lat": station["lat"],
             "lon": station["lon"],
             "actual_depth_m": actual_depth,
@@ -96,12 +82,13 @@ def scrape_url():
     }
 
 def main():
-    data = scrape_url()
-    
-    with open("data.json", "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-    
-    print(f"\n✅ Saved {data['station_count']} stations to data.json")
+    try:
+        data = scrape_url()
+        with open("data.json", "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        print(f"\n✅ Saved {data['station_count']} stations to data.json")
+    except Exception as e:
+        print(f"❌ Scraper failed: {e}")
 
 if __name__ == "__main__":
     main()
