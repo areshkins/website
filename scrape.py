@@ -3,10 +3,22 @@ import requests
 from datetime import datetime
 
 TARGET_URL = "https://videscentrs.lvgmc.lv/data/hymer_overview"
+RIVER_LIST_FILE = "doable_river_list.txt"
+
+def load_allowed_rivers():
+    """Reads the doable_river_list.txt and returns a set of river names."""
+    try:
+        with open(RIVER_LIST_FILE, "r", encoding="utf-8") as f:
+            return {line.strip() for line in f if line.strip()}
+    except FileNotFoundError:
+        print(f"⚠️ {RIVER_LIST_FILE} not found. All stations will be included.")
+        return set()
+
 def scrape_url():
     """
     Fetches the JSON API, and attempts to extract the required data for all stations.
     """
+    allowed_rivers = load_allowed_rivers()
     print(f"🌊 Fetching data from: {TARGET_URL}")
     response = requests.get(TARGET_URL, headers={"User-Agent": "Mozilla/5.0"}, timeout=15)
     response.raise_for_status()
@@ -29,6 +41,15 @@ def scrape_url():
         if "Baltijas jūra" in name or "Rīgas līcis" in name:
             print(f"   Skipping coastal station: {name}")
             continue
+            
+        # Filter by doable river list if available
+        if allowed_rivers:
+            # Check if any river name from the list matches the station name
+            # Usually station name is "River, Location"
+            base_river_name = name.split(",")[0].strip()
+            if not any(river.lower() in name.lower() for river in allowed_rivers):
+                # print(f"   Skipping station not in doable list: {name}")
+                continue
             
         print(f"   Analyzing station: {name}")
         
