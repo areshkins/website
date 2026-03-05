@@ -62,9 +62,16 @@ def scrape_url():
         time_series = station_data.get("ts", [])
         for ts in time_series:
             ts_name = ts.get("name", "")
+            unit = ts.get("unit", "")
             if ts_name == "Ūdens līmenis":
                 try:
-                    actual_depth = float(ts.get("value"))
+                    val = float(ts.get("value"))
+                    # If unit is cm, convert to meters
+                    if unit == "cm":
+                        actual_depth = val / 100.0
+                    else:
+                        actual_depth = val
+                        
                     last_dt = ts.get("last_date", "")
                     if last_dt:
                         try:
@@ -105,6 +112,8 @@ def main():
         print(f"\n✅ Saved {data['station_count']} stations to data.json")
     except Exception as e:
         print(f"❌ Scraper failed: {e}")
+        import sys
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
