@@ -146,22 +146,18 @@
 
         // Add river shapes to the map
         const riverLayersByName = {};
-        const majorRivers = ['Daugava', 'Gauja', 'Salaca', 'Lielupe', 'Venta'];
 
         fetch('rivers.geojson')
             .then(res => res.json())
             .then(geojsonData => {
-                // 1. Visible Layer (The lines on the map)
+                // 1. Visible Layer (The thin blue lines)
                 const visibleLayer = L.geoJSON(geojsonData, {
-                    style: (feature) => {
-                        const isMajor = majorRivers.includes(feature.properties.name);
-                        return {
-                            color: isMajor ? '#1A365D' : '#3182ce',
-                            weight: isMajor ? 3.5 : 2,
-                            opacity: isMajor ? 0.8 : 0.6,
-                            lineCap: 'round',
-                            lineJoin: 'round'
-                        };
+                    style: {
+                        color: '#3182ce',
+                        weight: 2,
+                        opacity: 0.6,
+                        lineCap: 'round',
+                        lineJoin: 'round'
                     },
                     onEachFeature: (feature, layer) => {
                         const riverName = feature.properties.name || 'Upe';
@@ -195,12 +191,7 @@
                         layer.on('mouseout', () => {
                             if (riverLayersByName[riverName]) {
                                 riverLayersByName[riverName].forEach(l => {
-                                    const isMajor = majorRivers.includes(riverName);
-                                    l.setStyle({
-                                        color: isMajor ? '#1A365D' : '#3182ce',
-                                        weight: isMajor ? 3.5 : 2,
-                                        opacity: isMajor ? 0.8 : 0.6
-                                    });
+                                    l.setStyle({ color: '#3182ce', weight: 2, opacity: 0.6 });
                                 });
                             }
                         });
