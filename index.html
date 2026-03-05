@@ -24,6 +24,55 @@
             height: 100vh;
         }
 
+        /* Filter UI */
+        .filter-container {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(8px);
+            max-width: 90vw;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .filter-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-pill {
+            padding: 8px 18px;
+            border-radius: 25px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            color: #4a5568;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .filter-pill:hover {
+            border-color: #cbd5e0;
+            background: #f7fafc;
+        }
+
+        .filter-pill.active {
+            background: #007BFF;
+            color: white;
+            border-color: #007BFF;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+        }
+
         /* Custom Leaflet Marker */
         .marker-pin {
             width: 20px;
@@ -128,6 +177,13 @@
 
 <body>
 
+    <div class="filter-container">
+        <button class="filter-pill active" data-filter="all">Visas upes</button>
+        <button class="filter-pill" data-filter="All Season">Visu sezonu</button>
+        <button class="filter-pill" data-filter="High Water Level">Augstā ūdens līmenī</button>
+        <button class="filter-pill" data-filter="Spring Floods Only">Tikai pavasara palos</button>
+    </div>
+
     <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
@@ -144,8 +200,72 @@
                 <circle cx="14" cy="13" r="4" fill="#fff"/>
             </svg>`;
 
+        const seasonalityData = {
+            "All Season": [
+                "Bārta", "Saka", "Venta", "Abava", "Irbe", "Rinda", "Engure", "Stende",
+                "Lielupe", "Mūsa", "Mēmele", "Susēja", "Viesīte", "Iecava", "Misa",
+                "Salaca", "Briede", "Seda", "Rūja", "Gauja", "Mustjegi", "Daugava",
+                "Sārija", "Dubna", "Aiviekste", "Rēzekne", "Malta", "Pededze", "Ogre",
+                "Mazā Jugla", "Lielā Jugla", "Zilupe", "Rītupe", "Ludza", "Kuhva"
+            ],
+            "High Water Level": [
+                "Vārtāja", "Durbe", "Tebra", "Rīva", "Užava", "Vadakste", "Ciecere",
+                "Roja", "Dursupe", "Svēte", "Tērvete", "Bērze", "Svētupe", "Vitrupe",
+                "Tirza", "Palsa", "Vaidava", "Melnupe", "Brasla", "Asūnīce", "Narūta",
+                "Dagda", "Tartaks", "Iča", "Balupe", "Liede", "Kuja", "Veseta", "Pērse",
+                "Lobe", "Mergupe", "Krievupe", "Tumšupe", "Vircava", "Platone"
+            ],
+            "Spring Floods Only": [
+                "Liekne", "Riežupe", "Amula", "Imula", "Iģe", "Vecpalsa", "Vija",
+                "Abuls", "Rauna", "Raunis", "Amata", "Ziemeļsusēja", "Arona"
+            ]
+        };
+
+        let currentFilter = 'all';
+
         // Add river shapes to the map
         const riverLayersByName = {};
+
+        function updateRiverStyles(filter) {
+            currentFilter = filter;
+
+            // Update buttons
+            document.querySelectorAll('.filter-pill').forEach(btn => {
+                if (btn.dataset.filter === filter) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Update layers
+            Object.keys(riverLayersByName).forEach(riverName => {
+                const layers = riverLayersByName[riverName];
+                let style = {};
+                let bringToFront = false;
+
+                if (filter === 'all') {
+                    style = { color: '#007BFF', weight: 2, opacity: 0.8 };
+                } else {
+                    const isMatch = (seasonalityData[filter] || []).includes(riverName);
+                    if (isMatch) {
+                        style = { color: '#007BFF', weight: 4, opacity: 1.0 };
+                        bringToFront = true;
+                    } else {
+                        style = { color: '#007BFF', weight: 1, opacity: 0.25 };
+                    }
+                }
+
+                layers.forEach(layer => {
+                    layer.setStyle(style);
+                    if (bringToFront) {
+                        layer.bringToFront();
+                    } else {
+                        layer.bringToBack();
+                    }
+                });
+            });
+        }
 
         fetch('rivers.geojson')
             .then(res => res.json())
@@ -153,9 +273,9 @@
                 // 1. Visible Layer (The thin blue lines)
                 const visibleLayer = L.geoJSON(geojsonData, {
                     style: {
-                        color: '#3182ce',
+                        color: '#007BFF',
                         weight: 2,
-                        opacity: 0.6,
+                        opacity: 0.8,
                         lineCap: 'round',
                         lineJoin: 'round'
                     },
@@ -191,12 +311,28 @@
                         layer.on('mouseout', () => {
                             if (riverLayersByName[riverName]) {
                                 riverLayersByName[riverName].forEach(l => {
-                                    l.setStyle({ color: '#3182ce', weight: 2, opacity: 0.6 });
+                                    if (currentFilter === 'all') {
+                                        l.setStyle({ color: '#007BFF', weight: 2, opacity: 0.8 });
+                                    } else {
+                                        const isMatch = (seasonalityData[currentFilter] || []).includes(riverName);
+                                        if (isMatch) {
+                                            l.setStyle({ color: '#007BFF', weight: 4, opacity: 1.0 });
+                                        } else {
+                                            l.setStyle({ color: '#007BFF', weight: 1, opacity: 0.25 });
+                                        }
+                                    }
                                 });
                             }
                         });
                     }
                 }).addTo(map);
+
+                // Initialize button listeners
+                document.querySelectorAll('.filter-pill').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        updateRiverStyles(btn.dataset.filter);
+                    });
+                });
             })
             .catch(err => console.error("Kļūda ielādējot rivers.geojson:", err));
 
