@@ -26,15 +26,20 @@
 
         /* Custom Leaflet Marker */
         .marker-pin {
-            width: 28px;
-            height: 36px;
+            width: 20px;
+            height: 26px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.5));
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 1000;
+        }
+
+        /* Remove black focus box on click */
+        .leaflet-container :focus {
+            outline: none !important;
         }
 
         .marker-pin.is-hovered {
@@ -141,18 +146,22 @@
 
         // Add river shapes to the map
         const riverLayersByName = {};
+        const majorRivers = ['Daugava', 'Gauja', 'Salaca', 'Lielupe', 'Venta'];
 
         fetch('rivers.geojson')
             .then(res => res.json())
             .then(geojsonData => {
-                // 1. Visible Layer (The thin blue lines)
+                // 1. Visible Layer (The lines on the map)
                 const visibleLayer = L.geoJSON(geojsonData, {
-                    style: {
-                        color: '#3182ce',
-                        weight: 2,
-                        opacity: 0.6,
-                        lineCap: 'round',
-                        lineJoin: 'round'
+                    style: (feature) => {
+                        const isMajor = majorRivers.includes(feature.properties.name);
+                        return {
+                            color: isMajor ? '#1A365D' : '#3182ce',
+                            weight: isMajor ? 3.5 : 2,
+                            opacity: isMajor ? 0.8 : 0.6,
+                            lineCap: 'round',
+                            lineJoin: 'round'
+                        };
                     },
                     onEachFeature: (feature, layer) => {
                         const riverName = feature.properties.name || 'Upe';
@@ -186,7 +195,12 @@
                         layer.on('mouseout', () => {
                             if (riverLayersByName[riverName]) {
                                 riverLayersByName[riverName].forEach(l => {
-                                    l.setStyle({ color: '#3182ce', weight: 2, opacity: 0.6 });
+                                    const isMajor = majorRivers.includes(riverName);
+                                    l.setStyle({
+                                        color: isMajor ? '#1A365D' : '#3182ce',
+                                        weight: isMajor ? 3.5 : 2,
+                                        opacity: isMajor ? 0.8 : 0.6
+                                    });
                                 });
                             }
                         });
@@ -218,9 +232,9 @@
                     const customIcon = L.divIcon({
                         html: `<div class="marker-pin">${svgIcon()}</div>`,
                         className: 'custom-marker',
-                        iconSize: [28, 36],
-                        iconAnchor: [14, 36],
-                        popupAnchor: [0, -36]
+                        iconSize: [20, 26],
+                        iconAnchor: [10, 26],
+                        popupAnchor: [0, -26]
                     });
 
                     const marker = L.marker([station.lat, station.lon], { icon: customIcon })
