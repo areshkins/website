@@ -206,18 +206,21 @@
                 "Lielupe", "Mūsa", "Mēmele", "Susēja", "Viesīte", "Iecava", "Misa",
                 "Salaca", "Briede", "Seda", "Rūja", "Gauja", "Mustjegi", "Daugava",
                 "Sārija", "Dubna", "Aiviekste", "Rēzekne", "Malta", "Pededze", "Ogre",
-                "Mazā Jugla", "Lielā Jugla", "Zilupe", "Rītupe", "Ludza", "Kuhva"
+                "Mazā Jugla", "Lielā Jugla", "Zilupe", "Rītupe", "Ludza", "Kuhva",
+                "Sārija", "Sarjanka", "Sarianka", "Saka"
             ],
             "High Water Level": [
                 "Vārtāja", "Durbe", "Tebra", "Rīva", "Užava", "Vadakste", "Ciecere",
                 "Roja", "Dursupe", "Svēte", "Tērvete", "Bērze", "Svētupe", "Vitrupe",
-                "Tirza", "Palsa", "Vaidava", "Melnupe", "Brasla", "Asūnīce", "Narūta",
+                "Tirza", "Palsa", "Vaidava", "Melnupe", "Brasla", "Asūnīce",
                 "Dagda", "Tartaks", "Iča", "Balupe", "Liede", "Kuja", "Veseta", "Pērse",
-                "Lobe", "Mergupe", "Krievupe", "Tumšupe", "Vircava", "Platone"
+                "Lobe", "Mergupe", "Krievupe", "Tumšupe", "Vircava", "Platone",
+                "Iģe", "Ige"
             ],
             "Spring Floods Only": [
                 "Liekne", "Riežupe", "Amula", "Imula", "Iģe", "Vecpalsa", "Vija",
-                "Abuls", "Rauna", "Raunis", "Amata", "Ziemeļsusēja", "Arona"
+                "Abuls", "Rauna", "Raunis", "Amata", "Ziemeļsusēja", "Arona",
+                "Liekne"
             ]
         };
 
@@ -247,7 +250,11 @@
                 if (filter === 'all') {
                     style = { color: '#007BFF', weight: 2, opacity: 0.8 };
                 } else {
-                    const isMatch = (seasonalityData[filter] || []).includes(riverName);
+                    const filterList = seasonalityData[filter] || [];
+                    // Handle dual names like "Ludza / Лжа"
+                    const nameParts = riverName.split('/').map(p => p.trim());
+                    const isMatch = nameParts.some(part => filterList.includes(part));
+
                     if (isMatch) {
                         style = { color: '#007BFF', weight: 4, opacity: 1.0 };
                         bringToFront = true;
@@ -267,11 +274,24 @@
             });
         }
 
+        const hiddenRivers = [
+            "Bērzene", "Grīva", "Jaunpalsa", "Jaunpededze", "Jaunā Veseta",
+            "Kroja", "Mazbriede", "Mazirbe", "Mazā Daugava", "Misas Vecupe",
+            "Moziča", "Narūta", "Pilda", "Ramata", "Sarkandaugava",
+            "Sausā Daugava", "Skujaine", "Susējas HES pievads", "Vecbērze",
+            "Vecpededze", "Vecventa", "Vesetas kanāls", "Vičaka", "Engures upe"
+        ];
+
         fetch('rivers.geojson')
             .then(res => res.json())
             .then(geojsonData => {
                 // 1. Visible Layer (The thin blue lines)
                 const visibleLayer = L.geoJSON(geojsonData, {
+                    filter: (feature) => {
+                        const props = feature.properties;
+                        const primaryName = props.name || props['name:lv'] || props['name:en'] || 'Upe';
+                        return !hiddenRivers.includes(primaryName);
+                    },
                     style: {
                         color: '#007BFF',
                         weight: 2,
@@ -280,49 +300,108 @@
                         lineJoin: 'round'
                     },
                     onEachFeature: (feature, layer) => {
-                        const riverName = feature.properties.name || 'Upe';
-                        if (!riverLayersByName[riverName]) {
-                            riverLayersByName[riverName] = [];
+                        // Check multiple name properties for border rivers
+                        const props = feature.properties;
+                        const potentialNames = [
+                            props.name,
+                            props['name:lv'],
+                            props['name:en']
+                        ].filter(Boolean);
+
+                        // Use the first available name as the primary key, but index all
+                        const primaryName = props.name || props['name:lv'] || props['name:en'] || 'Upe';
+
+                        potentialNames.forEach(name => {
+                            // Split dual names like "Ludza / Лжа"
+                            const parts = name.split('/').map(p => p.trim());
+                            parts.forEach(part => {
+                                if (!riverLayersByName[part]) {
+                                    riverLayersByName[part] = [];
+                                }
+                                riverLayersByName[part].push(layer);
+                            });
+                        });
+
+                        // Also index the original full name string just in case
+                        if (!riverLayersByName[primaryName]) {
+                            riverLayersByName[primaryName] = [];
                         }
-                        riverLayersByName[riverName].push(layer);
+                        riverLayersByName[primaryName].push(layer);
+
+                        // Store the display name on the layer for tooltips
+                        layer._riverDisplayName = primaryName;
                     }
                 }).addTo(map);
 
                 // 2. Interaction Layer (Invisible thick lines for easier hovering)
                 const interactionLayer = L.geoJSON(geojsonData, {
+                    filter: (feature) => {
+                        const props = feature.properties;
+                        const primaryName = props.name || props['name:lv'] || props['name:en'] || 'Upe';
+                        return !hiddenRivers.includes(primaryName);
+                    },
                     style: {
                         color: 'transparent',
                         weight: 20, // Much larger radius for easier hovering
                         opacity: 0
                     },
                     onEachFeature: (feature, layer) => {
-                        const riverName = feature.properties.name || 'Upe';
+                        const props = feature.properties;
+                        const riverName = props.name || props['name:lv'] || props['name:en'] || 'Upe';
 
-                        // Bind tooltip only to the interaction layer so it shows up once
+                        // Bind tooltip using the display name stored earlier or derived here
                         layer.bindTooltip(riverName, { sticky: true });
 
                         layer.on('mouseover', () => {
-                            if (riverLayersByName[riverName]) {
-                                riverLayersByName[riverName].forEach(l => {
-                                    l.setStyle({ color: '#2b6cb0', weight: 4, opacity: 0.9 });
-                                });
-                            }
+                            // Match against any part of any potential name
+                            const potentialNames = [
+                                props.name,
+                                props['name:lv'],
+                                props['name:en']
+                            ].filter(Boolean);
+
+                            const allParts = new Set();
+                            potentialNames.forEach(n => n.split('/').forEach(p => allParts.add(p.trim())));
+                            allParts.add(riverName);
+
+                            allParts.forEach(part => {
+                                if (riverLayersByName[part]) {
+                                    riverLayersByName[part].forEach(l => {
+                                        l.setStyle({ color: '#2b6cb0', weight: 4, opacity: 0.9 });
+                                    });
+                                }
+                            });
                         });
                         layer.on('mouseout', () => {
-                            if (riverLayersByName[riverName]) {
-                                riverLayersByName[riverName].forEach(l => {
-                                    if (currentFilter === 'all') {
-                                        l.setStyle({ color: '#007BFF', weight: 2, opacity: 0.8 });
-                                    } else {
-                                        const isMatch = (seasonalityData[currentFilter] || []).includes(riverName);
-                                        if (isMatch) {
-                                            l.setStyle({ color: '#007BFF', weight: 4, opacity: 1.0 });
+                            const props = feature.properties;
+                            const potentialNames = [
+                                props.name,
+                                props['name:lv'],
+                                props['name:en']
+                            ].filter(Boolean);
+
+                            const allParts = new Set();
+                            potentialNames.forEach(n => n.split('/').forEach(p => allParts.add(p.trim())));
+                            allParts.add(riverName);
+
+                            allParts.forEach(part => {
+                                if (riverLayersByName[part]) {
+                                    riverLayersByName[part].forEach(l => {
+                                        if (currentFilter === 'all') {
+                                            l.setStyle({ color: '#007BFF', weight: 2, opacity: 0.8 });
                                         } else {
-                                            l.setStyle({ color: '#007BFF', weight: 1, opacity: 0.25 });
+                                            const filterList = seasonalityData[currentFilter] || [];
+                                            const isMatch = Array.from(allParts).some(p => filterList.includes(p));
+
+                                            if (isMatch) {
+                                                l.setStyle({ color: '#007BFF', weight: 4, opacity: 1.0 });
+                                            } else {
+                                                l.setStyle({ color: '#007BFF', weight: 1, opacity: 0.25 });
+                                            }
                                         }
-                                    }
-                                });
-                            }
+                                    });
+                                }
+                            });
                         });
                     }
                 }).addTo(map);
