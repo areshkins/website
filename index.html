@@ -12,11 +12,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
             margin: 0;
             font-family: 'Inter', sans-serif;
             background: #f4f7f6;
             color: #2d3748;
+            overscroll-behavior: none;
         }
 
         #map {
@@ -24,53 +29,202 @@
             height: 100vh;
         }
 
-        /* Filter UI */
-        .filter-container {
+        /* Filter Toggle Button */
+        .filter-toggle {
             position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
-            display: flex;
-            gap: 10px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 8px;
-            border-radius: 50px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            top: 12px;
+            right: 12px;
+            z-index: 1001;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: none;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.12);
             backdrop-filter: blur(8px);
-            max-width: 90vw;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-
-        .filter-container::-webkit-scrollbar {
-            display: none;
-        }
-
-        .filter-pill {
-            padding: 8px 18px;
-            border-radius: 25px;
-            border: 1px solid #e2e8f0;
-            background: white;
-            color: #4a5568;
-            font-size: 14px;
-            font-weight: 600;
             cursor: pointer;
-            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: all 0.2s ease;
-            outline: none;
+            color: #4a5568;
+            font-size: 20px;
         }
 
-        .filter-pill:hover {
-            border-color: #cbd5e0;
-            background: #f7fafc;
+        .filter-toggle:hover {
+            background: #fff;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
         }
 
-        .filter-pill.active {
+        .filter-toggle.panel-open {
             background: #007BFF;
             color: white;
-            border-color: #007BFF;
-            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+        }
+
+        /* Filter Panel */
+        .filter-panel {
+            position: absolute;
+            top: 62px;
+            right: 12px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 14px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+            backdrop-filter: blur(12px);
+            width: 240px;
+            max-height: calc(100vh - 90px);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            transform: translateX(110%);
+            opacity: 0;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .filter-panel.open {
+            transform: translateX(0);
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .filter-panel-header {
+            padding: 14px 16px 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .filter-panel-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1a202c;
+        }
+
+        .filter-reset {
+            font-size: 12px;
+            color: #007BFF;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.15s;
+        }
+
+        .filter-reset:hover {
+            background: rgba(0, 123, 255, 0.08);
+        }
+
+        /* Filter Group */
+        .filter-group {
+            padding: 8px 14px 12px;
+        }
+
+        .filter-group + .filter-group {
+            border-top: 1px solid #edf2f7;
+        }
+
+        .filter-group-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #a0aec0;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 8px;
+            padding-left: 2px;
+        }
+
+        .filter-group-items {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .filter-item {
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: none;
+            background: transparent;
+            color: #4a5568;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.15s ease;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .filter-item:hover {
+            background: #f0f4f8;
+            color: #2d3748;
+        }
+
+        .filter-item.active {
+            background: rgba(0, 123, 255, 0.1);
+            color: #007BFF;
+            font-weight: 600;
+        }
+
+        .filter-item .filter-icon {
+            margin-right: 8px;
+        }
+
+        .river-ranking {
+            list-style: none;
+            padding: 0 0 0 12px;
+            margin: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .river-ranking.expanded {
+            max-height: 400px;
+            padding: 6px 0 4px 12px;
+        }
+
+        .river-ranking li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 8px;
+            font-size: 12px;
+            color: #4a5568;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .river-ranking li:hover {
+            background: rgba(0, 123, 255, 0.08);
+            color: #007BFF;
+        }
+
+        .river-ranking .rank-num {
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            background: rgba(0, 123, 255, 0.1);
+            color: #007BFF;
+            font-size: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .filter-item .chevron {
+            margin-left: auto;
+            font-size: 10px;
+            transition: transform 0.2s ease;
+            opacity: 0.5;
+        }
+
+        .filter-item .chevron.open {
+            transform: rotate(180deg);
         }
 
         /* Custom Leaflet Marker */
@@ -172,16 +326,177 @@
             color: #a0aec0;
             text-align: center;
         }
+
+        /* Backdrop overlay */
+        .filter-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            background: rgba(0, 0, 0, 0.25);
+        }
+
+        .filter-backdrop.visible {
+            display: block;
+        }
+
+        /* ========== MOBILE STYLES ========== */
+        @media (max-width: 600px) {
+            .filter-toggle {
+                width: 46px;
+                height: 46px;
+                font-size: 22px;
+                border-radius: 12px;
+                top: 10px;
+                right: 10px;
+            }
+
+            .filter-panel {
+                top: auto;
+                bottom: 0;
+                right: 0;
+                left: 0;
+                width: 100%;
+                max-height: 60vh;
+                border-radius: 18px 18px 0 0;
+                transform: translateY(100%);
+                box-shadow: 0 -4px 24px rgba(0,0,0,0.15);
+            }
+
+            .filter-panel.open {
+                transform: translateY(0);
+            }
+
+            .filter-panel-header {
+                padding: 16px 20px 8px;
+            }
+
+            .filter-panel-title {
+                font-size: 17px;
+            }
+
+            .filter-reset {
+                font-size: 14px;
+                padding: 6px 12px;
+            }
+
+            .filter-group {
+                padding: 10px 16px 14px;
+            }
+
+            .filter-group-label {
+                font-size: 12px;
+                margin-bottom: 10px;
+            }
+
+            .filter-group-items {
+                gap: 2px;
+            }
+
+            .filter-item {
+                padding: 12px 14px;
+                font-size: 15px;
+                border-radius: 12px;
+                touch-action: manipulation;
+            }
+
+            .filter-item .chevron {
+                font-size: 12px;
+            }
+
+            .river-ranking li {
+                padding: 8px 10px;
+                font-size: 14px;
+                touch-action: manipulation;
+            }
+
+            .river-ranking .rank-num {
+                width: 24px;
+                height: 24px;
+                font-size: 11px;
+            }
+
+            .leaflet-popup-content {
+                width: 200px !important;
+            }
+
+            .popup-header {
+                padding: 10px 14px;
+                font-size: 14px;
+            }
+
+            .popup-main {
+                padding: 12px;
+            }
+
+            .popup-main-stat {
+                font-size: 36px;
+            }
+
+            .popup-main-unit {
+                font-size: 16px;
+            }
+
+            .popup-sub {
+                padding: 8px 14px;
+                font-size: 13px;
+            }
+
+            .popup-footer {
+                padding: 6px 14px;
+                font-size: 10px;
+            }
+
+            /* Move Leaflet zoom to bottom-left on mobile */
+            .leaflet-top.leaflet-left {
+                top: auto;
+                bottom: 20px;
+            }
+        }
+
+
     </style>
 </head>
 
 <body>
 
-    <div class="filter-container">
-        <button class="filter-pill active" data-filter="all">Visas upes</button>
-        <button class="filter-pill" data-filter="All Season">Visu sezonu</button>
-        <button class="filter-pill" data-filter="High Water Level">Augstā ūdens līmenī</button>
-        <button class="filter-pill" data-filter="Spring Floods Only">Tikai pavasara palos</button>
+    <button class="filter-toggle" id="filterToggle" title="Filtri">☰</button>
+    <div class="filter-backdrop" id="filterBackdrop"></div>
+
+    <div class="filter-panel" id="filterPanel">
+        <div class="filter-panel-header">
+            <span class="filter-panel-title">Filtri</span>
+            <button class="filter-reset" data-filter="all">Atiestatīt</button>
+        </div>
+
+        <div class="filter-group">
+            <div class="filter-group-label">Sezonalitāte</div>
+            <div class="filter-group-items">
+                <button class="filter-item active" data-filter="all"><span class="filter-icon">🌊</span>Visas upes</button>
+                <button class="filter-item" data-filter="All Season"><span class="filter-icon">☀️</span>Visu sezonu</button>
+                <button class="filter-item" data-filter="High Water Level"><span class="filter-icon">💧</span>Augstā ūdens līmenī</button>
+                <button class="filter-item" data-filter="Spring Floods Only"><span class="filter-icon">🌸</span>Tikai pavasara palos</button>
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <div class="filter-group-label">Straumes ātrums</div>
+            <div class="filter-group-items">
+                <button class="filter-item" data-filter="Fastest Rivers" id="fastestRiversBtn"><span class="filter-icon">⚡</span>Ātrākās upes<span class="chevron" id="rankingChevron">▼</span></button>
+            </div>
+            <ol class="river-ranking" id="riverRanking">
+                <li data-river="Rauna"><span class="rank-num">1</span>Rauna</li>
+                <li data-river="Raunis"><span class="rank-num">2</span>Raunis</li>
+                <li data-river="Veseta"><span class="rank-num">3</span>Veseta</li>
+                <li data-river="Amata"><span class="rank-num">4</span>Amata</li>
+                <li data-river="Arona"><span class="rank-num">5</span>Arona</li>
+                <li data-river="Amula"><span class="rank-num">6</span>Amula</li>
+                <li data-river="Liekne"><span class="rank-num">7</span>Liekne</li>
+                <li data-river="Ludza"><span class="rank-num">8</span>Ludza</li>
+                <li data-river="Imula"><span class="rank-num">9</span>Imula</li>
+                <li data-river="Brasla"><span class="rank-num">10</span>Brasla</li>
+            </ol>
+        </div>
     </div>
 
     <div id="map"></div>
@@ -200,7 +515,7 @@
                 <circle cx="14" cy="13" r="4" fill="#fff"/>
             </svg>`;
 
-        const seasonalityData = {
+        const filterData = {
             "All Season": [
                 "Bārta", "Saka", "Venta", "Abava", "Irbe", "Rinda", "Engure", "Stende",
                 "Lielupe", "Mūsa", "Mēmele", "Susēja", "Viesīte", "Iecava", "Misa",
@@ -221,6 +536,10 @@
                 "Liekne", "Riežupe", "Amula", "Imula", "Iģe", "Vecpalsa", "Vija",
                 "Abuls", "Rauna", "Raunis", "Amata", "Ziemeļsusēja", "Arona",
                 "Liekne"
+            ],
+            "Fastest Rivers": [
+                "Rauna", "Raunis", "Veseta", "Amata", "Arona",
+                "Amula", "Liekne", "Ludza", "Imula", "Brasla"
             ]
         };
 
@@ -233,7 +552,7 @@
             currentFilter = filter;
 
             // Update buttons
-            document.querySelectorAll('.filter-pill').forEach(btn => {
+            document.querySelectorAll('.filter-item').forEach(btn => {
                 if (btn.dataset.filter === filter) {
                     btn.classList.add('active');
                 } else {
@@ -245,29 +564,33 @@
             Object.keys(riverLayersByName).forEach(riverName => {
                 const layers = riverLayersByName[riverName];
                 let style = {};
-                let bringToFront = false;
 
-                if (filter === 'all') {
-                    style = { color: '#007BFF', weight: 2, opacity: 0.8 };
-                } else {
-                    const filterList = seasonalityData[filter] || [];
-                    // Handle dual names like "Ludza / Лжа"
-                    const nameParts = riverName.split('/').map(p => p.trim());
-                    const isMatch = nameParts.some(part => filterList.includes(part));
-
-                    if (isMatch) {
-                        style = { color: '#007BFF', weight: 4, opacity: 1.0 };
-                        bringToFront = true;
-                    } else {
-                        style = { color: '#007BFF', weight: 1, opacity: 0.25 };
-                    }
-                }
+                const filterList = filterData[filter] || [];
+                const isMatch = filterList.includes(riverName);
 
                 layers.forEach(layer => {
-                    layer.setStyle(style);
-                    if (bringToFront) {
-                        layer.bringToFront();
+                    const featureData = layer.feature;
+                    let riverWidth = 0;
+                    if (featureData && featureData.properties && featureData.properties.width) {
+                        riverWidth = parseFloat(featureData.properties.width);
+                    }
+
+                    let scaledPhysicalWidth = riverWidth > 0 ? Math.max(2, Math.min(15, riverWidth / 15)) : 2;
+
+                    if (filter === 'all') {
+                        style = { color: '#007BFF', weight: scaledPhysicalWidth, opacity: 0.8 };
                     } else {
+                        if (isMatch) {
+                            style = { color: '#007BFF', weight: Math.max(4, scaledPhysicalWidth + 2), opacity: 1.0 };
+                        } else {
+                            style = { color: '#007BFF', weight: 1, opacity: 0.25 };
+                        }
+                    }
+
+                    layer.setStyle(style);
+                    if (isMatch && filter !== 'all') {
+                        layer.bringToFront();
+                    } else if (filter !== 'all') {
                         layer.bringToBack();
                     }
                 });
@@ -280,7 +603,7 @@
             "Moziča", "Narūta", "Pilda", "Sarkandaugava",
             "Sausā Daugava", "Skujaine", "Susējas HES pievads", "Vecbērze",
             "Vecpededze", "Vecventa", "Vesetas kanāls", "Vičaka", "Engures upe",
-            "Ramata", "Raamatu jõgi / Ramata"
+            "Ramata", "Raamatu jõgi / Ramata", "Liekne"
         ];
 
         fetch('rivers.geojson')
@@ -293,12 +616,20 @@
                         const primaryName = props.name || props['name:lv'] || props['name:en'] || 'Upe';
                         return !hiddenRivers.includes(primaryName);
                     },
-                    style: {
-                        color: '#007BFF',
-                        weight: 2,
-                        opacity: 0.8,
-                        lineCap: 'round',
-                        lineJoin: 'round'
+                    style: (feature) => {
+                        let riverWidth = 0;
+                        if (feature.properties && feature.properties.width) {
+                            riverWidth = parseFloat(feature.properties.width);
+                        }
+                        let scaledWidth = riverWidth > 0 ? Math.max(2, Math.min(15, riverWidth / 15)) : 2;
+
+                        return {
+                            color: '#007BFF',
+                            weight: scaledWidth,
+                            opacity: 0.8,
+                            lineCap: 'round',
+                            lineJoin: 'round'
+                        };
                     },
                     onEachFeature: (feature, layer) => {
                         // Check multiple name properties for border rivers
@@ -368,7 +699,13 @@
                             allParts.forEach(part => {
                                 if (riverLayersByName[part]) {
                                     riverLayersByName[part].forEach(l => {
-                                        l.setStyle({ color: '#2b6cb0', weight: 4, opacity: 0.9 });
+                                        const featureData = l.feature;
+                                        let riverWidth = 0;
+                                        if (featureData && featureData.properties && featureData.properties.width) {
+                                            riverWidth = parseFloat(featureData.properties.width);
+                                        }
+                                        let baseWeight = riverWidth > 0 ? Math.max(2, Math.min(15, riverWidth / 15)) : 2;
+                                        l.setStyle({ color: '#2b6cb0', weight: Math.max(4, baseWeight + 2), opacity: 0.9 });
                                     });
                                 }
                             });
@@ -388,14 +725,21 @@
                             allParts.forEach(part => {
                                 if (riverLayersByName[part]) {
                                     riverLayersByName[part].forEach(l => {
+                                        const featureData = l.feature;
+                                        let riverWidth = 0;
+                                        if (featureData && featureData.properties && featureData.properties.width) {
+                                            riverWidth = parseFloat(featureData.properties.width);
+                                        }
+                                        let scaledPhysicalWidth = riverWidth > 0 ? Math.max(2, Math.min(15, riverWidth / 15)) : 2;
+
                                         if (currentFilter === 'all') {
-                                            l.setStyle({ color: '#007BFF', weight: 2, opacity: 0.8 });
+                                            l.setStyle({ color: '#007BFF', weight: scaledPhysicalWidth, opacity: 0.8 });
                                         } else {
-                                            const filterList = seasonalityData[currentFilter] || [];
+                                            const filterList = filterData[currentFilter] || [];
                                             const isMatch = Array.from(allParts).some(p => filterList.includes(p));
 
                                             if (isMatch) {
-                                                l.setStyle({ color: '#007BFF', weight: 4, opacity: 1.0 });
+                                                l.setStyle({ color: '#007BFF', weight: Math.max(4, scaledPhysicalWidth + 2), opacity: 1.0 });
                                             } else {
                                                 l.setStyle({ color: '#007BFF', weight: 1, opacity: 0.25 });
                                             }
@@ -407,10 +751,110 @@
                     }
                 }).addTo(map);
 
-                // Initialize button listeners
-                document.querySelectorAll('.filter-pill').forEach(btn => {
+                // Initialize filter item listeners
+                document.querySelectorAll('.filter-item, .filter-reset').forEach(btn => {
                     btn.addEventListener('click', () => {
                         updateRiverStyles(btn.dataset.filter);
+                    });
+                });
+
+                // Toggle panel open/close
+                const toggleBtn = document.getElementById('filterToggle');
+                const panel = document.getElementById('filterPanel');
+                const backdrop = document.getElementById('filterBackdrop');
+
+                function closePanel() {
+                    panel.classList.remove('open');
+                    toggleBtn.classList.remove('panel-open');
+                    backdrop.classList.remove('visible');
+                }
+
+                function openPanel() {
+                    panel.classList.add('open');
+                    toggleBtn.classList.add('panel-open');
+                    backdrop.classList.add('visible');
+                }
+
+                toggleBtn.addEventListener('click', () => {
+                    if (panel.classList.contains('open')) {
+                        closePanel();
+                    } else {
+                        openPanel();
+                    }
+                });
+
+                backdrop.addEventListener('click', closePanel);
+
+                // Toggle river ranking dropdown
+                const fastestBtn = document.getElementById('fastestRiversBtn');
+                const ranking = document.getElementById('riverRanking');
+                const chevron = document.getElementById('rankingChevron');
+                fastestBtn.addEventListener('click', () => {
+                    ranking.classList.toggle('expanded');
+                    chevron.classList.toggle('open');
+                });
+
+                // Helper: highlight a river by name
+                function highlightRiver(riverName) {
+                    if (riverLayersByName[riverName]) {
+                        riverLayersByName[riverName].forEach(l => {
+                            const featureData = l.feature;
+                            let riverWidth = 0;
+                            if (featureData && featureData.properties && featureData.properties.width) {
+                                riverWidth = parseFloat(featureData.properties.width);
+                            }
+                            let baseWeight = riverWidth > 0 ? Math.max(2, Math.min(15, riverWidth / 15)) : 2;
+                            l.setStyle({ color: '#2b6cb0', weight: Math.max(4, baseWeight + 2), opacity: 0.9 });
+                            l.bringToFront();
+                        });
+                    }
+                }
+
+                // Helper: unhighlight a river by name (restore current filter style)
+                function unhighlightRiver(riverName) {
+                    if (riverLayersByName[riverName]) {
+                        riverLayersByName[riverName].forEach(l => {
+                            const featureData = l.feature;
+                            let riverWidth = 0;
+                            if (featureData && featureData.properties && featureData.properties.width) {
+                                riverWidth = parseFloat(featureData.properties.width);
+                            }
+                            let scaledPhysicalWidth = riverWidth > 0 ? Math.max(2, Math.min(15, riverWidth / 15)) : 2;
+
+                            if (currentFilter === 'all') {
+                                l.setStyle({ color: '#007BFF', weight: scaledPhysicalWidth, opacity: 0.8 });
+                            } else {
+                                const filterList = filterData[currentFilter] || [];
+                                const isMatch = filterList.includes(riverName);
+                                if (isMatch) {
+                                    l.setStyle({ color: '#007BFF', weight: Math.max(4, scaledPhysicalWidth + 2), opacity: 1.0 });
+                                } else {
+                                    l.setStyle({ color: '#007BFF', weight: 1, opacity: 0.25 });
+                                }
+                            }
+                        });
+                    }
+                }
+
+                // River ranking list: hover and click to highlight
+                document.querySelectorAll('.river-ranking li[data-river]').forEach(li => {
+                    const riverName = li.dataset.river;
+
+                    li.addEventListener('mouseenter', () => {
+                        highlightRiver(riverName);
+                    });
+
+                    li.addEventListener('mouseleave', () => {
+                        unhighlightRiver(riverName);
+                    });
+
+                    li.addEventListener('click', () => {
+                        highlightRiver(riverName);
+                        // Pan to the river
+                        if (riverLayersByName[riverName] && riverLayersByName[riverName].length > 0) {
+                            const bounds = L.featureGroup(riverLayersByName[riverName]).getBounds();
+                            map.fitBounds(bounds, { padding: [50, 50], maxZoom: 11 });
+                        }
                     });
                 });
             })
