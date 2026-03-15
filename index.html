@@ -57,7 +57,7 @@
         }
 
         .filter-toggle.panel-open {
-            background: #007BFF;
+            background: #3182CE;
             color: white;
         }
 
@@ -102,7 +102,7 @@
 
         .filter-reset {
             font-size: 12px;
-            color: #007BFF;
+            color: #3182CE;
             cursor: pointer;
             border: none;
             background: none;
@@ -163,7 +163,7 @@
 
         .filter-item.active {
             background: rgba(0, 123, 255, 0.1);
-            color: #007BFF;
+            color: #3182CE;
             font-weight: 600;
         }
 
@@ -199,7 +199,7 @@
 
         .river-ranking li:hover {
             background: rgba(0, 123, 255, 0.08);
-            color: #007BFF;
+            color: #3182CE;
         }
 
         .river-ranking .rank-num {
@@ -207,7 +207,7 @@
             height: 20px;
             border-radius: 6px;
             background: rgba(0, 123, 255, 0.1);
-            color: #007BFF;
+            color: #3182CE;
             font-size: 10px;
             font-weight: 700;
             display: flex;
@@ -229,15 +229,32 @@
 
         /* Custom Leaflet Marker */
         .marker-pin {
-            width: 20px;
-            height: 26px;
+            width: 21px;
+            height: 21px;
+            border-radius: 50%;
+            background: rgba(49, 130, 206, 0.75);
+            box-shadow: 0 3px 10px rgba(49, 130, 206, 0.42);
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-direction: column;
             cursor: pointer;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 1000;
+        }
+
+        .marker-pin .marker-depth {
+            font-size: 7px;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .marker-pin .marker-unit {
+            font-size: 5px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1;
         }
 
         /* Remove black focus box on click */
@@ -246,9 +263,8 @@
         }
 
         .marker-pin.is-hovered {
-            transform: scale(1.4) translateY(-5px);
-            filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.4));
-            z-index: 2000;
+            transform: scale(1.3);
+            box-shadow: 0 6px 16px rgba(49, 130, 206, 0.55);
         }
 
         /* Popup Styling */
@@ -325,6 +341,40 @@
             font-size: 11px;
             color: #a0aec0;
             text-align: center;
+        }
+
+        /* Multi-station rows */
+        .popup-station-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 7px 16px;
+            border-bottom: 1px solid #f0f4f8;
+            gap: 8px;
+        }
+        .popup-station-row:last-child { border-bottom: none; }
+        .popup-station-loc {
+            font-size: 13px;
+            color: #4a5568;
+            flex: 1;
+        }
+        .popup-station-depth {
+            font-size: 14px;
+            font-weight: 800;
+            color: #3182CE;
+            white-space: nowrap;
+        }
+        .popup-station-depth small {
+            font-size: 10px;
+            font-weight: 500;
+            color: #a0aec0;
+        }
+        .popup-station-temp {
+            font-size: 11px;
+            color: #a0aec0;
+            white-space: nowrap;
+            min-width: 36px;
+            text-align: right;
         }
 
         /* Backdrop overlay */
@@ -509,11 +559,6 @@
             attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
         }).addTo(map);
 
-        const svgIcon = (color = "#4fd1c5") => `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 36">
-                <path d="M14 0C6.268 0 0 6.268 0 14c0 10.5 14 22 14 22s14-11.5 14-22C28 6.268 21.732 0 14 0z" fill="${color}"/>
-                <circle cx="14" cy="13" r="4" fill="#fff"/>
-            </svg>`;
 
         const filterData = {
             "All Season": [
@@ -543,12 +588,28 @@
             ]
         };
 
+        function getRiverWeight(props) {
+            const name = (props && (props.name || props['name:lv'] || props['name:en'])) || '';
+            const tiers = {
+                'Daugava': 4,
+                'Gauja': 3, 'Venta': 3, 'Lielupe': 3,
+            };
+            const parts = name.split('/').map(p => p.trim());
+            for (const p of parts) { if (tiers[p]) return tiers[p]; }
+            return 2;
+        }
+
         let currentFilter = 'all';
+        let selectedRiver = null;
+        let selectedPopup = null;
+        let stationsData = [];
+        let deselectRiver = () => {};
 
         // Add river shapes to the map
         const riverLayersByName = {};
 
         function updateRiverStyles(filter) {
+            deselectRiver();
             currentFilter = filter;
 
             // Update buttons
@@ -570,20 +631,15 @@
 
                 layers.forEach(layer => {
                     const featureData = layer.feature;
-                    let riverWidth = 0;
-                    if (featureData && featureData.properties && featureData.properties.width) {
-                        riverWidth = parseFloat(featureData.properties.width);
-                    }
-
-                    let scaledPhysicalWidth = riverWidth > 0 ? Math.max(2, Math.min(15, riverWidth / 15)) : 2;
+                    const scaledPhysicalWidth = getRiverWeight(featureData && featureData.properties);
 
                     if (filter === 'all') {
-                        style = { color: '#007BFF', weight: scaledPhysicalWidth, opacity: 0.8 };
+                        style = { color: '#3182CE', weight: scaledPhysicalWidth, opacity: 0.8 };
                     } else {
                         if (isMatch) {
-                            style = { color: '#007BFF', weight: Math.max(4, scaledPhysicalWidth + 2), opacity: 1.0 };
+                            style = { color: '#3182CE', weight: Math.max(4, scaledPhysicalWidth + 2), opacity: 1.0 };
                         } else {
-                            style = { color: '#007BFF', weight: 1, opacity: 0.25 };
+                            style = { color: '#3182CE', weight: 1, opacity: 0.25 };
                         }
                     }
 
@@ -612,20 +668,15 @@
                 // 1. Visible Layer (The thin blue lines)
                 const visibleLayer = L.geoJSON(geojsonData, {
                     filter: (feature) => {
+                        if (feature.geometry.type === 'Point' || feature.geometry.type === 'MultiPoint') return false;
                         const props = feature.properties;
                         const primaryName = props.name || props['name:lv'] || props['name:en'] || 'Upe';
                         return !hiddenRivers.includes(primaryName);
                     },
                     style: (feature) => {
-                        let riverWidth = 0;
-                        if (feature.properties && feature.properties.width) {
-                            riverWidth = parseFloat(feature.properties.width);
-                        }
-                        let scaledWidth = riverWidth > 0 ? Math.max(2, Math.min(15, riverWidth / 15)) : 2;
-
                         return {
-                            color: '#007BFF',
-                            weight: scaledWidth,
+                            color: '#3182CE',
+                            weight: getRiverWeight(feature.properties),
                             opacity: 0.8,
                             lineCap: 'round',
                             lineJoin: 'round'
@@ -668,6 +719,7 @@
                 // 2. Interaction Layer (Invisible thick lines for easier hovering)
                 const interactionLayer = L.geoJSON(geojsonData, {
                     filter: (feature) => {
+                        if (feature.geometry.type === 'Point' || feature.geometry.type === 'MultiPoint') return false;
                         const props = feature.properties;
                         const primaryName = props.name || props['name:lv'] || props['name:en'] || 'Upe';
                         return !hiddenRivers.includes(primaryName);
@@ -700,11 +752,7 @@
                                 if (riverLayersByName[part]) {
                                     riverLayersByName[part].forEach(l => {
                                         const featureData = l.feature;
-                                        let riverWidth = 0;
-                                        if (featureData && featureData.properties && featureData.properties.width) {
-                                            riverWidth = parseFloat(featureData.properties.width);
-                                        }
-                                        let baseWeight = riverWidth > 0 ? Math.max(2, Math.min(15, riverWidth / 15)) : 2;
+                                        const baseWeight = getRiverWeight(featureData && featureData.properties);
                                         l.setStyle({ color: '#2b6cb0', weight: Math.max(4, baseWeight + 2), opacity: 0.9 });
                                     });
                                 }
@@ -722,30 +770,72 @@
                             potentialNames.forEach(n => n.split('/').forEach(p => allParts.add(p.trim())));
                             allParts.add(riverName);
 
+                            if (selectedRiver && allParts.has(selectedRiver)) return;
+
                             allParts.forEach(part => {
                                 if (riverLayersByName[part]) {
                                     riverLayersByName[part].forEach(l => {
                                         const featureData = l.feature;
-                                        let riverWidth = 0;
-                                        if (featureData && featureData.properties && featureData.properties.width) {
-                                            riverWidth = parseFloat(featureData.properties.width);
-                                        }
-                                        let scaledPhysicalWidth = riverWidth > 0 ? Math.max(2, Math.min(15, riverWidth / 15)) : 2;
+                                        const scaledPhysicalWidth = getRiverWeight(featureData && featureData.properties);
 
                                         if (currentFilter === 'all') {
-                                            l.setStyle({ color: '#007BFF', weight: scaledPhysicalWidth, opacity: 0.8 });
+                                            l.setStyle({ color: '#3182CE', weight: scaledPhysicalWidth, opacity: 0.8 });
                                         } else {
                                             const filterList = filterData[currentFilter] || [];
                                             const isMatch = Array.from(allParts).some(p => filterList.includes(p));
 
                                             if (isMatch) {
-                                                l.setStyle({ color: '#007BFF', weight: Math.max(4, scaledPhysicalWidth + 2), opacity: 1.0 });
+                                                l.setStyle({ color: '#3182CE', weight: Math.max(4, scaledPhysicalWidth + 2), opacity: 1.0 });
                                             } else {
-                                                l.setStyle({ color: '#007BFF', weight: 1, opacity: 0.25 });
+                                                l.setStyle({ color: '#3182CE', weight: 1, opacity: 0.25 });
                                             }
                                         }
                                     });
                                 }
+                            });
+                        });
+                        layer.on('click', (e) => {
+                            L.DomEvent.stopPropagation(e);
+                            if (selectedRiver === riverName) {
+                                deselectRiver();
+                                return;
+                            }
+                            deselectRiver();
+                            selectedRiver = riverName;
+                            highlightRiver(riverName);
+
+                            const stations = stationsData.filter(s => s.name.split(',')[0].trim() === riverName);
+                            let popupContent;
+                            if (stations.length > 0) {
+                                const rows = stations.map(s => {
+                                    const loc = s.name.split(',').slice(1).join(',').trim() || s.name;
+                                    const depth = s.actual_depth_m !== null ? s.actual_depth_m : '—';
+                                    const temp = s.water_temperature_c !== null ? `${s.water_temperature_c}°C` : '—';
+                                    return `<div class="popup-station-row">
+                                        <span class="popup-station-loc">${loc}</span>
+                                        <span class="popup-station-depth">${depth}<small> m</small></span>
+                                        <span class="popup-station-temp">${temp}</span>
+                                    </div>`;
+                                }).join('');
+                                const time = stations[0].update_time || 'Nav datu';
+                                popupContent = `
+                                    <div class="popup-header">${riverName}</div>
+                                    ${rows}
+                                    <div class="popup-footer">Atjaunots no LVĢMC: ${time}</div>
+                                `;
+                            } else {
+                                popupContent = `<div class="popup-header">${riverName}</div>`;
+                            }
+                            selectedPopup = L.popup()
+                                .setLatLng(e.latlng)
+                                .setContent(popupContent)
+                                .openOn(map);
+                            map.once('popupclose', () => {
+                                if (selectedRiver === riverName) {
+                                    unhighlightRiver(riverName);
+                                    selectedRiver = null;
+                                }
+                                selectedPopup = null;
                             });
                         });
                     }
@@ -799,11 +889,7 @@
                     if (riverLayersByName[riverName]) {
                         riverLayersByName[riverName].forEach(l => {
                             const featureData = l.feature;
-                            let riverWidth = 0;
-                            if (featureData && featureData.properties && featureData.properties.width) {
-                                riverWidth = parseFloat(featureData.properties.width);
-                            }
-                            let baseWeight = riverWidth > 0 ? Math.max(2, Math.min(15, riverWidth / 15)) : 2;
+                            const baseWeight = getRiverWeight(featureData && featureData.properties);
                             l.setStyle({ color: '#2b6cb0', weight: Math.max(4, baseWeight + 2), opacity: 0.9 });
                             l.bringToFront();
                         });
@@ -815,26 +901,37 @@
                     if (riverLayersByName[riverName]) {
                         riverLayersByName[riverName].forEach(l => {
                             const featureData = l.feature;
-                            let riverWidth = 0;
-                            if (featureData && featureData.properties && featureData.properties.width) {
-                                riverWidth = parseFloat(featureData.properties.width);
-                            }
-                            let scaledPhysicalWidth = riverWidth > 0 ? Math.max(2, Math.min(15, riverWidth / 15)) : 2;
+                            const scaledPhysicalWidth = getRiverWeight(featureData && featureData.properties);
 
                             if (currentFilter === 'all') {
-                                l.setStyle({ color: '#007BFF', weight: scaledPhysicalWidth, opacity: 0.8 });
+                                l.setStyle({ color: '#3182CE', weight: scaledPhysicalWidth, opacity: 0.8 });
                             } else {
                                 const filterList = filterData[currentFilter] || [];
                                 const isMatch = filterList.includes(riverName);
                                 if (isMatch) {
-                                    l.setStyle({ color: '#007BFF', weight: Math.max(4, scaledPhysicalWidth + 2), opacity: 1.0 });
+                                    l.setStyle({ color: '#3182CE', weight: Math.max(4, scaledPhysicalWidth + 2), opacity: 1.0 });
                                 } else {
-                                    l.setStyle({ color: '#007BFF', weight: 1, opacity: 0.25 });
+                                    l.setStyle({ color: '#3182CE', weight: 1, opacity: 0.25 });
                                 }
                             }
                         });
                     }
                 }
+
+                deselectRiver = function() {
+                    if (selectedRiver) {
+                        unhighlightRiver(selectedRiver);
+                        selectedRiver = null;
+                    }
+                    if (selectedPopup) {
+                        map.closePopup(selectedPopup);
+                        selectedPopup = null;
+                    }
+                };
+
+                map.on('click', () => {
+                    deselectRiver();
+                });
 
                 // River ranking list: hover and click to highlight
                 document.querySelectorAll('.river-ranking li[data-river]').forEach(li => {
@@ -863,6 +960,7 @@
         fetch('data.json')
             .then(res => res.json())
             .then(data => {
+                stationsData = data.stations;
                 data.stations.forEach(station => {
                     const depth = station.actual_depth_m !== null ? station.actual_depth_m : '—';
                     const temp = station.water_temperature_c !== null ? `${station.water_temperature_c} °C` : '—';
@@ -881,11 +979,11 @@
                     `;
 
                     const customIcon = L.divIcon({
-                        html: `<div class="marker-pin">${svgIcon()}</div>`,
+                        html: `<div class="marker-pin"><span class="marker-depth">${depth}</span><span class="marker-unit">m</span></div>`,
                         className: 'custom-marker',
-                        iconSize: [20, 26],
-                        iconAnchor: [10, 26],
-                        popupAnchor: [0, -26]
+                        iconSize: [21, 21],
+                        iconAnchor: [11, 11],
+                        popupAnchor: [0, -13]
                     });
 
                     const marker = L.marker([station.lat, station.lon], { icon: customIcon })
