@@ -29,7 +29,7 @@
             height: 100vh;
         }
 
-        /* Filter Toggle Button */
+        /* Filter Toggle Button — Dark Naval */
         .filter-toggle {
             position: absolute;
             top: 12px;
@@ -38,43 +38,46 @@
             width: 40px;
             height: 40px;
             border-radius: 10px;
-            border: none;
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+            border: 1px solid rgba(100, 170, 220, 0.2);
+            background: rgba(30, 52, 82, 0.97);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.35);
             backdrop-filter: blur(8px);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s ease;
-            color: #4a5568;
+            color: #c8dff0;
             font-size: 20px;
         }
 
         .filter-toggle:hover {
-            background: #fff;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            background: rgba(40, 68, 105, 0.98);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.45);
         }
 
         .filter-toggle.panel-open {
-            background: #3182CE;
-            color: white;
+            background: rgba(30, 52, 82, 0.98);
+            color: #7dd8f0;
+            border-color: rgba(125, 216, 240, 0.35);
         }
 
-        /* Filter Panel */
+        /* Filter Panel — Dark Naval */
         .filter-panel {
             position: absolute;
             top: 62px;
             right: 12px;
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.96);
+            background: rgba(30, 52, 82, 0.97);
+            border: 1px solid rgba(100, 170, 220, 0.18);
             border-radius: 14px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+            box-shadow: 0 6px 28px rgba(0,0,0,0.45);
             backdrop-filter: blur(12px);
             width: 240px;
             max-height: calc(100vh - 90px);
             overflow-y: auto;
             scrollbar-width: thin;
+            scrollbar-color: rgba(125,216,240,0.2) transparent;
             transform: translateX(110%);
             opacity: 0;
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
@@ -97,12 +100,12 @@
         .filter-panel-title {
             font-size: 15px;
             font-weight: 700;
-            color: #1a202c;
+            color: #c8dff0;
         }
 
         .filter-reset {
             font-size: 12px;
-            color: #3182CE;
+            color: #7dd8f0;
             cursor: pointer;
             border: none;
             background: none;
@@ -110,10 +113,11 @@
             padding: 4px 8px;
             border-radius: 6px;
             transition: background 0.15s;
+            font-family: inherit;
         }
 
         .filter-reset:hover {
-            background: rgba(0, 123, 255, 0.08);
+            background: rgba(125, 216, 240, 0.1);
         }
 
         /* Filter Group */
@@ -122,13 +126,13 @@
         }
 
         .filter-group + .filter-group {
-            border-top: 1px solid #edf2f7;
+            border-top: 1px solid rgba(100, 170, 220, 0.12);
         }
 
         .filter-group-label {
             font-size: 11px;
             font-weight: 700;
-            color: #a0aec0;
+            color: rgba(125, 190, 230, 0.5);
             text-transform: uppercase;
             letter-spacing: 0.6px;
             margin-bottom: 8px;
@@ -146,7 +150,7 @@
             border-radius: 10px;
             border: none;
             background: transparent;
-            color: #4a5568;
+            color: rgba(195, 220, 242, 0.8);
             font-size: 13px;
             font-weight: 500;
             cursor: pointer;
@@ -157,13 +161,13 @@
         }
 
         .filter-item:hover {
-            background: #f0f4f8;
-            color: #2d3748;
+            background: rgba(125, 216, 240, 0.08);
+            color: #c8dff0;
         }
 
         .filter-item.active {
-            background: rgba(0, 123, 255, 0.1);
-            color: #3182CE;
+            background: rgba(125, 216, 240, 0.13);
+            color: #7dd8f0;
             font-weight: 600;
         }
 
@@ -191,23 +195,23 @@
             gap: 8px;
             padding: 5px 8px;
             font-size: 12px;
-            color: #4a5568;
+            color: rgba(180, 210, 235, 0.75);
             border-radius: 8px;
             cursor: pointer;
             transition: background 0.15s;
         }
 
         .river-ranking li:hover {
-            background: rgba(0, 123, 255, 0.08);
-            color: #3182CE;
+            background: rgba(125, 216, 240, 0.08);
+            color: #a8d4f0;
         }
 
         .river-ranking .rank-num {
             width: 20px;
             height: 20px;
             border-radius: 6px;
-            background: rgba(0, 123, 255, 0.1);
-            color: #3182CE;
+            background: rgba(125, 216, 240, 0.12);
+            color: #7dd8f0;
             font-size: 10px;
             font-weight: 700;
             display: flex;
@@ -265,6 +269,20 @@
         .marker-pin.is-hovered {
             transform: scale(1.3);
             box-shadow: 0 6px 16px rgba(49, 130, 206, 0.55);
+        }
+        @keyframes markerPop {
+            0%   { transform: scale(1); }
+            35%  { transform: scale(1.7); box-shadow: 0 0 0 6px rgba(125,216,240,0.35), 0 4px 16px rgba(49,130,206,0.55); }
+            65%  { transform: scale(1.4); }
+            100% { transform: scale(1.35); box-shadow: 0 0 0 3px rgba(125,216,240,0.2), 0 2px 8px rgba(49,130,206,0.35); }
+        }
+        .marker-pin.popping {
+            animation: markerPop 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        .marker-pin.river-active {
+            transform: scale(1.35);
+            box-shadow: 0 0 0 3px rgba(125,216,240,0.2), 0 2px 8px rgba(49,130,206,0.35);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         /* Popup Styling */
@@ -393,45 +411,49 @@
 
         /* ========== MOBILE STYLES ========== */
         @media (max-width: 600px) {
+
+            /* Filter toggle button */
             .filter-toggle {
-                width: 46px;
-                height: 46px;
+                width: 48px;
+                height: 48px;
                 font-size: 22px;
                 border-radius: 12px;
                 top: 10px;
                 right: 10px;
+                touch-action: manipulation;
             }
 
+            /* Bottom sheet panel */
             .filter-panel {
                 top: auto;
                 bottom: 0;
                 right: 0;
                 left: 0;
                 width: 100%;
-                max-height: 44vh;
+                max-height: 72vh;
                 border-radius: 18px 18px 0 0;
                 transform: translateY(100%);
-                box-shadow: 0 -4px 24px rgba(0,0,0,0.15);
-                padding-bottom: env(safe-area-inset-bottom, 0px);
+                box-shadow: 0 -6px 28px rgba(0,0,0,0.5);
+                padding-bottom: env(safe-area-inset-bottom, 8px);
             }
 
             .filter-panel.open {
                 transform: translateY(0);
             }
 
+            /* Drag handle */
             .filter-panel::before {
                 content: '';
                 display: block;
                 width: 36px;
                 height: 4px;
-                background: #cbd5e0;
+                background: rgba(125, 216, 240, 0.25);
                 border-radius: 2px;
                 margin: 10px auto 0;
-                flex-shrink: 0;
             }
 
             .filter-panel-header {
-                padding: 10px 20px 8px;
+                padding: 10px 20px 6px;
             }
 
             .filter-panel-title {
@@ -441,30 +463,55 @@
             .filter-reset {
                 font-size: 14px;
                 padding: 6px 12px;
+                touch-action: manipulation;
             }
 
             .filter-group {
-                padding: 10px 16px 14px;
+                padding: 8px 16px 12px;
             }
 
             .filter-group-label {
                 font-size: 12px;
-                margin-bottom: 10px;
+                margin-bottom: 8px;
             }
 
+            /* Chip/pill layout — items wrap into rows */
             .filter-group-items {
-                gap: 2px;
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 6px;
             }
 
             .filter-item {
-                padding: 12px 14px;
-                font-size: 15px;
-                border-radius: 12px;
+                padding: 8px 14px;
+                font-size: 14px;
+                border-radius: 20px;
+                border: 1px solid rgba(100, 170, 220, 0.15);
+                background: rgba(255,255,255,0.03);
                 touch-action: manipulation;
+                flex-shrink: 0;
+                min-height: 36px;
+                display: inline-flex;
+                align-items: center;
+            }
+
+            .filter-item.active {
+                border-color: rgba(125, 216, 240, 0.35);
+            }
+
+            /* Fastest Rivers expander spans full width */
+            #fastestRiversBtn {
+                width: 100%;
+                border-radius: 12px;
             }
 
             .filter-item .chevron {
                 font-size: 12px;
+            }
+
+            /* River ranking constrained inside bottom sheet */
+            .river-ranking.expanded {
+                max-height: 160px;
             }
 
             .river-ranking li {
@@ -479,13 +526,14 @@
                 font-size: 11px;
             }
 
+            /* Popup adapts to screen width */
             .leaflet-popup-content {
-                width: 200px !important;
+                width: min(280px, 88vw) !important;
             }
 
             .popup-header {
-                padding: 9px 12px;
-                font-size: 12px;
+                padding: 10px 14px;
+                font-size: 13px;
             }
 
             .popup-main {
@@ -493,7 +541,7 @@
             }
 
             .popup-main-stat {
-                font-size: 36px;
+                font-size: 38px;
             }
 
             .popup-main-unit {
@@ -510,14 +558,35 @@
                 font-size: 10px;
             }
 
-            /* Move Leaflet zoom to bottom-left on mobile */
-            .leaflet-top.leaflet-left {
-                top: auto;
-                bottom: 20px;
+            /* Hide zoom controls on mobile — users pinch to zoom */
+            .leaflet-control-zoom {
+                display: none;
             }
         }
 
 
+        /* ── River glow + confluence heat blobs ── */
+        @keyframes heatBlobPulse {
+            0%, 100% { opacity: 0.06; transform: scale(0.88); }
+            50%       { opacity: 0.50; transform: scale(1.0); }
+        }
+        .heat-blob-outer {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(114,216,240,0.45) 0%, rgba(74,184,216,0.18) 50%, transparent 72%);
+            animation: heatBlobPulse 6s ease-in-out infinite;
+            pointer-events: none;
+            position: relative;
+        }
+        .heat-blob-inner {
+            position: absolute;
+            width: 44%; height: 44%;
+            top: 28%; left: 28%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(160,238,255,0.6) 0%, rgba(100,190,230,0.25) 55%, transparent 100%);
+            animation: heatBlobPulse 4s ease-in-out infinite;
+            pointer-events: none;
+        }
     </style>
 </head>
 
@@ -533,9 +602,16 @@
         </div>
 
         <div class="filter-group">
-            <div class="filter-group-label">Sezonalitāte</div>
+            <div class="filter-group-label">Upju atlase</div>
             <div class="filter-group-items">
                 <button class="filter-item active" data-filter="all"><span class="filter-icon">🌊</span>Visas upes</button>
+                <button class="filter-item" data-filter="Popular Rivers"><span class="filter-icon">⭐</span>Populārākās upes</button>
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <div class="filter-group-label">Sezonalitāte</div>
+            <div class="filter-group-items">
                 <button class="filter-item" data-filter="All Season"><span class="filter-icon">☀️</span>Visu sezonu</button>
                 <button class="filter-item" data-filter="High Water Level"><span class="filter-icon">💧</span>Augstā ūdens līmenī</button>
                 <button class="filter-item" data-filter="Spring Floods Only"><span class="filter-icon">🌸</span>Tikai pavasara palos</button>
@@ -572,6 +648,9 @@
             attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
         }).addTo(map);
 
+        map.createPane('heatBlobPane').style.zIndex = 398;
+        map.createPane('glowPane').style.zIndex = 399;
+
 
         const filterData = {
             "All Season": [
@@ -598,6 +677,17 @@
             "Fastest Rivers": [
                 "Rauna", "Raunis", "Veseta", "Amata", "Arona",
                 "Amula", "Liekne", "Ludza", "Imula", "Brasla"
+            ],
+            "Popular Rivers": [
+                "Abava", "Abuls", "Aiviekste", "Amata", "Amula",
+                "Bārta", "Bērze", "Brasla", "Briede", "Ciecere",
+                "Daugava", "Dienvidsusēja", "Dubna", "Gauja",
+                "Iecava", "Imula", "Irbe", "Jaunupe", "Jugla",
+                "Lielā Jugla", "Lielupe", "Mazā Jugla", "Mēmele",
+                "Misa", "Mūsa", "Ogre", "Pededze", "Rauna",
+                "Rinda", "Roja", "Rūja", "Saka", "Salaca",
+                "Seda", "Svēte", "Svētupe", "Tebra", "Vadakste",
+                "Vaive", "Vārtāja", "Venta", "Viesīte", "Vitrupe"
             ]
         };
 
@@ -617,6 +707,7 @@
         let selectedPopup = null;
         let stationsData = [];
         let deselectRiver = () => {};
+        const stationMarkers = {};
 
         // Add river shapes to the map
         const riverLayersByName = {};
@@ -678,6 +769,52 @@
         fetch('rivers.geojson')
             .then(res => res.json())
             .then(geojsonData => {
+                // 0a. Glow layer — static blurred wide stroke on the whole pane
+                L.geoJSON(geojsonData, {
+                    pane: 'glowPane',
+                    filter: (feature) => {
+                        if (feature.geometry.type === 'Point' || feature.geometry.type === 'MultiPoint') return false;
+                        const props = feature.properties;
+                        const primaryName = props.name || props['name:lv'] || props['name:en'] || 'Upe';
+                        return !hiddenRivers.includes(primaryName);
+                    },
+                    style: (feature) => ({
+                        color: '#6fd4f4',
+                        weight: 9 + getRiverWeight(feature.properties) * 1.5,
+                        opacity: 1,
+                        lineCap: 'round',
+                        lineJoin: 'round'
+                    })
+                }).addTo(map);
+
+                // Apply blur + opacity to the pane as a whole so the effect is
+                // uniform across all rivers at every zoom level
+                const glowPaneEl = map.getPane('glowPane');
+                glowPaneEl.style.opacity = '0.16';
+                glowPaneEl.style.filter  = 'blur(4.5px)';
+
+                // 0b. Confluence heat blobs
+                const confluences = [
+                    { latlng: [57.403, 24.368], size: 44, delay: 0 },    // Gauja mouth
+                    { latlng: [56.815, 24.600], size: 36, delay: 1.3 },   // Daugava / Ogre
+                    { latlng: [56.598, 25.882], size: 32, delay: 2.6 },   // Daugava / Aiviekste
+                    { latlng: [56.410, 24.190], size: 30, delay: 0.7 },   // Bauska / Lielupe
+                    { latlng: [57.003, 22.008], size: 28, delay: 1.9 },   // Venta / Abava
+                ];
+                confluences.forEach(c => {
+                    L.marker(c.latlng, {
+                        pane: 'heatBlobPane',
+                        interactive: false,
+                        keyboard: false,
+                        icon: L.divIcon({
+                            className: '',
+                            html: `<div class="heat-blob-outer" style="animation-delay:${-c.delay}s"><div class="heat-blob-inner" style="animation-delay:${-(c.delay + 0.9)}s"></div></div>`,
+                            iconSize: [c.size, c.size],
+                            iconAnchor: [c.size / 2, c.size / 2]
+                        })
+                    }).addTo(map);
+                });
+
                 // 1. Visible Layer (The thin blue lines)
                 const visibleLayer = L.geoJSON(geojsonData, {
                     filter: (feature) => {
@@ -817,9 +954,46 @@
                             selectedRiver = riverName;
                             highlightRiver(riverName);
 
-                            const stations = stationsData.filter(s => s.name.split(',')[0].trim() === riverName);
+                            // River names like "Gauja / Koiva jõgi" must match station "Gauja, ..."
+                            const riverNameParts = riverName.split('/').map(p => p.trim());
+                            const displayName = props['name:lv'] || riverNameParts[0];
+                            const stations = stationsData.filter(s => riverNameParts.includes(s.name.split(',')[0].trim()));
+
+                            // Pop the station marker(s) to draw attention
+                            stations.forEach(s => {
+                                const m = stationMarkers[s.name];
+                                if (m) {
+                                    const pin = m.getElement() && m.getElement().querySelector('.marker-pin');
+                                    if (pin) {
+                                        pin.classList.remove('popping', 'river-active');
+                                        void pin.offsetWidth;
+                                        pin.classList.add('popping');
+                                        pin.addEventListener('animationend', () => {
+                                            pin.classList.remove('popping');
+                                            pin.classList.add('river-active');
+                                        }, { once: true });
+                                    }
+                                }
+                            });
+
                             let popupContent;
-                            if (stations.length > 0) {
+                            if (stations.length === 1) {
+                                const s = stations[0];
+                                const depth = s.actual_depth_m !== null ? Number(s.actual_depth_m).toFixed(2) : '—';
+                                const temp = s.water_temperature_c !== null ? `${s.water_temperature_c} °C` : '—';
+                                const time = s.update_time || 'Nav datu';
+                                popupContent = `
+                                    <div class="popup-header">${s.name}</div>
+                                    <div class="popup-main">
+                                        <div class="popup-main-stat">${depth}<span class="popup-main-unit"> m</span></div>
+                                    </div>
+                                    <div class="popup-sub">
+                                        <span class="popup-sub-label">Ūdens Temp:</span>
+                                        <span class="popup-sub-value">${temp}</span>
+                                    </div>
+                                    <div class="popup-footer">Atjaunots no LVĢMC: ${time}</div>
+                                `;
+                            } else if (stations.length > 1) {
                                 const rows = stations.map(s => {
                                     const loc = s.name.split(',').slice(1).join(',').trim() || s.name;
                                     const depth = s.actual_depth_m !== null ? Number(s.actual_depth_m).toFixed(2) : '—';
@@ -832,12 +1006,12 @@
                                 }).join('');
                                 const time = stations[0].update_time || 'Nav datu';
                                 popupContent = `
-                                    <div class="popup-header">${riverName}</div>
+                                    <div class="popup-header">${displayName}</div>
                                     ${rows}
                                     <div class="popup-footer">Atjaunots no LVĢMC: ${time}</div>
                                 `;
                             } else {
-                                popupContent = `<div class="popup-header">${riverName}</div>`;
+                                popupContent = `<div class="popup-header">${displayName}</div>`;
                             }
                             selectedPopup = L.popup()
                                 .setLatLng(e.latlng)
@@ -943,6 +1117,9 @@
                         map.closePopup(selectedPopup);
                         selectedPopup = null;
                     }
+                    document.querySelectorAll('.marker-pin.river-active').forEach(pin => {
+                        pin.classList.remove('river-active');
+                    });
                 };
 
                 map.on('click', () => {
@@ -980,7 +1157,7 @@
             .then(res => res.json())
             .then(data => {
                 stationsData = data.stations;
-                data.stations.forEach(station => {
+                data.stations.filter(station => !/ezers|ūdenskrātuve/i.test(station.name)).forEach(station => {
                     const depth = station.actual_depth_m !== null ? Number(station.actual_depth_m).toFixed(2) : '—';
                     const temp = station.water_temperature_c !== null ? `${station.water_temperature_c} °C` : '—';
                     const time = station.update_time || 'Nav datu';
@@ -1008,6 +1185,7 @@
                     const marker = L.marker([station.lat, station.lon], { icon: customIcon })
                         .bindPopup(popupHTML)
                         .addTo(map);
+                    stationMarkers[station.name] = marker;
 
                     // Hover interactivity: make marker bigger
                     marker.on('mouseover', function (e) {
