@@ -755,6 +755,18 @@
                     }
                 });
             });
+
+            // Show/hide station markers based on filter
+            const filterList = filterData[filter] || [];
+            Object.entries(stationMarkers).forEach(([name, marker]) => {
+                const riverName = name.split(',')[0].trim();
+                const visible = filter === 'all' || filterList.includes(riverName);
+                if (visible) {
+                    if (!map.hasLayer(marker)) marker.addTo(map);
+                } else {
+                    marker.remove();
+                }
+            });
         }
 
         const hiddenRivers = [
