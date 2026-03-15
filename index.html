@@ -269,12 +269,12 @@
 
         /* Popup Styling */
         .leaflet-popup-content-wrapper {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
+            background: #344a66;
+            border: 1px solid #4e6888;
+            border-radius: 10px;
             overflow: hidden;
             padding: 0;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.38);
         }
 
         .leaflet-popup-content {
@@ -283,64 +283,66 @@
         }
 
         .leaflet-popup-tip {
-            background: #ffffff;
+            background: #344a66;
         }
 
         /* Popup Structure */
         .popup-header {
-            background: #edf2f7;
-            padding: 12px 16px;
-            font-size: 16px;
+            background: #3d5578;
+            padding: 10px 14px;
+            font-size: 13px;
             font-weight: 700;
-            color: #2d3748;
+            color: #e2e8f0;
             text-align: center;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid rgba(160, 205, 240, 0.18);
+            letter-spacing: 0.01em;
         }
 
         .popup-main {
-            padding: 16px;
+            padding: 14px;
             text-align: center;
-            background: #ffffff;
+            background: #344a66;
         }
 
         .popup-main-stat {
-            font-size: 48px;
+            font-size: 42px;
             font-weight: 700;
-            color: #319795;
+            color: #e2e8f0;
             line-height: 1;
             margin-bottom: 4px;
         }
 
         .popup-main-unit {
-            font-size: 20px;
-            color: #718096;
+            font-size: 18px;
+            color: #90a8c8;
             font-weight: 400;
         }
 
         .popup-sub {
-            padding: 10px 16px;
+            padding: 8px 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-top: 1px solid #e2e8f0;
-            font-size: 14px;
+            border-top: 1px solid rgba(160, 205, 240, 0.14);
+            font-size: 13px;
         }
 
         .popup-sub-label {
-            color: #4a5568;
+            color: #90a8c8;
         }
 
         .popup-sub-value {
             font-weight: 600;
-            color: #dd6b20;
+            color: #f6ad55;
         }
 
         .popup-footer {
-            background: #f8fafc;
-            padding: 8px 16px;
-            font-size: 11px;
-            color: #a0aec0;
+            background: #344a66;
+            padding: 7px 14px;
+            font-size: 10px;
+            color: #6880a0;
             text-align: center;
+            border-top: 1px solid rgba(160, 205, 240, 0.1);
         }
 
         /* Multi-station rows */
@@ -348,30 +350,29 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 7px 16px;
-            border-bottom: 1px solid #f0f4f8;
+            padding: 7px 14px;
+            border-top: 1px solid rgba(160, 205, 240, 0.1);
             gap: 8px;
         }
-        .popup-station-row:last-child { border-bottom: none; }
         .popup-station-loc {
-            font-size: 13px;
-            color: #4a5568;
+            font-size: 12px;
+            color: #90a8c8;
             flex: 1;
         }
         .popup-station-depth {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 800;
-            color: #3182CE;
+            color: #e2e8f0;
             white-space: nowrap;
         }
         .popup-station-depth small {
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 500;
-            color: #a0aec0;
+            color: #6880a0;
         }
         .popup-station-temp {
-            font-size: 11px;
-            color: #a0aec0;
+            font-size: 10px;
+            color: #6880a0;
             white-space: nowrap;
             min-width: 36px;
             text-align: right;
@@ -407,18 +408,30 @@
                 right: 0;
                 left: 0;
                 width: 100%;
-                max-height: 60vh;
+                max-height: 44vh;
                 border-radius: 18px 18px 0 0;
                 transform: translateY(100%);
                 box-shadow: 0 -4px 24px rgba(0,0,0,0.15);
+                padding-bottom: env(safe-area-inset-bottom, 0px);
             }
 
             .filter-panel.open {
                 transform: translateY(0);
             }
 
+            .filter-panel::before {
+                content: '';
+                display: block;
+                width: 36px;
+                height: 4px;
+                background: #cbd5e0;
+                border-radius: 2px;
+                margin: 10px auto 0;
+                flex-shrink: 0;
+            }
+
             .filter-panel-header {
-                padding: 16px 20px 8px;
+                padding: 10px 20px 8px;
             }
 
             .filter-panel-title {
@@ -471,8 +484,8 @@
             }
 
             .popup-header {
-                padding: 10px 14px;
-                font-size: 14px;
+                padding: 9px 12px;
+                font-size: 12px;
             }
 
             .popup-main {
@@ -809,7 +822,7 @@
                             if (stations.length > 0) {
                                 const rows = stations.map(s => {
                                     const loc = s.name.split(',').slice(1).join(',').trim() || s.name;
-                                    const depth = s.actual_depth_m !== null ? s.actual_depth_m : '—';
+                                    const depth = s.actual_depth_m !== null ? Number(s.actual_depth_m).toFixed(2) : '—';
                                     const temp = s.water_temperature_c !== null ? `${s.water_temperature_c}°C` : '—';
                                     return `<div class="popup-station-row">
                                         <span class="popup-station-loc">${loc}</span>
@@ -845,6 +858,9 @@
                 document.querySelectorAll('.filter-item, .filter-reset').forEach(btn => {
                     btn.addEventListener('click', () => {
                         updateRiverStyles(btn.dataset.filter);
+                        if (window.matchMedia('(max-width: 600px)').matches) {
+                            closePanel();
+                        }
                     });
                 });
 
@@ -952,6 +968,9 @@
                             const bounds = L.featureGroup(riverLayersByName[riverName]).getBounds();
                             map.fitBounds(bounds, { padding: [50, 50], maxZoom: 11 });
                         }
+                        if (window.matchMedia('(max-width: 600px)').matches) {
+                            closePanel();
+                        }
                     });
                 });
             })
@@ -962,7 +981,7 @@
             .then(data => {
                 stationsData = data.stations;
                 data.stations.forEach(station => {
-                    const depth = station.actual_depth_m !== null ? station.actual_depth_m : '—';
+                    const depth = station.actual_depth_m !== null ? Number(station.actual_depth_m).toFixed(2) : '—';
                     const temp = station.water_temperature_c !== null ? `${station.water_temperature_c} °C` : '—';
                     const time = station.update_time || 'Nav datu';
 
