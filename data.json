@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-04-05T02:30:12.479877",
+  "last_updated": "2026-04-05T05:44:27.488284",
   "station_count": 74,
   "stations": [
     {
@@ -8,55 +8,55 @@
       "lon": 22.2917,
       "actual_depth_m": 0.99,
       "water_temperature_c": null,
-      "update_time": "05.04.2026 02:20"
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Aiviekste, Aiviekstes HES",
       "lat": 56.63927,
       "lon": 25.93161,
-      "actual_depth_m": 2.13,
-      "water_temperature_c": 6.9,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 2.14,
+      "water_temperature_c": 6.8,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Aiviekste, Lubāna",
       "lat": 56.90574,
       "lon": 26.71508,
-      "actual_depth_m": 2.53,
-      "water_temperature_c": 7.6,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 2.52,
+      "water_temperature_c": 7.4,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Alūksnes ezers, Alūksne",
       "lat": 57.42661,
       "lon": 27.05519,
       "actual_depth_m": 0.86,
-      "water_temperature_c": 4.8,
-      "update_time": "05.04.2026 02:20"
+      "water_temperature_c": 4.7,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Amata, Melturi",
       "lat": 57.22319,
       "lon": 25.23445,
       "actual_depth_m": 0.67,
-      "water_temperature_c": 4.9,
-      "update_time": "05.04.2026 02:20"
+      "water_temperature_c": 4.8,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Bārta, Dūkupji",
       "lat": 56.36476,
       "lon": 21.2186,
       "actual_depth_m": 0.92,
-      "water_temperature_c": 5.7,
-      "update_time": "05.04.2026 02:20"
+      "water_temperature_c": 5.5,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Bērze, Baloži",
       "lat": 56.68446,
       "lon": 23.50328,
-      "actual_depth_m": 1.16,
-      "water_temperature_c": 6.1,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 1.19,
+      "water_temperature_c": 6.0,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Burtnieku ezers, Burtnieki",
@@ -71,56 +71,56 @@
       "lat": 56.69922,
       "lon": 22.2689,
       "actual_depth_m": 1.75,
-      "water_temperature_c": 5.5,
-      "update_time": "05.04.2026 02:20"
+      "water_temperature_c": 4.9,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Daugava, Andrejosta",
       "lat": 56.96081,
       "lon": 24.09391,
-      "actual_depth_m": 1.91,
+      "actual_depth_m": 1.79,
       "water_temperature_c": null,
-      "update_time": "05.04.2026 02:20"
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Daugava, Daugavpils",
       "lat": 55.86386,
       "lon": 26.51404,
-      "actual_depth_m": 3.4,
+      "actual_depth_m": 3.39,
       "water_temperature_c": 6.3,
-      "update_time": "05.04.2026 02:20"
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Daugava, Jersika",
       "lat": 56.25579,
       "lon": 26.19661,
-      "actual_depth_m": 4.42,
-      "water_temperature_c": 6.7,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 4.4,
+      "water_temperature_c": 6.6,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Daugava, Jēkabpils",
       "lat": 56.4976,
       "lon": 25.89148,
-      "actual_depth_m": 4.11,
-      "water_temperature_c": 6.5,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 4.1,
+      "water_temperature_c": 6.4,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Daugava, Krāslava",
       "lat": 55.88961,
       "lon": 27.16699,
-      "actual_depth_m": 4.33,
-      "water_temperature_c": 6.7,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 4.31,
+      "water_temperature_c": 6.6,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Daugava, Piedruja",
       "lat": 55.79499,
       "lon": 27.45189,
-      "actual_depth_m": 6.45,
-      "water_temperature_c": 6.3,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 6.42,
+      "water_temperature_c": 6.2,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Daugavas-Gaujas kanāls, Alderi",
@@ -134,9 +134,9 @@
       "name": "Daugava, Vaikuļāni",
       "lat": 55.99544,
       "lon": 26.37482,
-      "actual_depth_m": 3.14,
+      "actual_depth_m": 3.13,
       "water_temperature_c": 5.6,
-      "update_time": "05.04.2026 02:20"
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Dubna, Sīļi",
@@ -144,55 +144,55 @@
       "lon": 26.34587,
       "actual_depth_m": 0.98,
       "water_temperature_c": null,
-      "update_time": "05.04.2026 02:20"
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Dubna, Višķi",
       "lat": 56.08005,
       "lon": 26.72652,
-      "actual_depth_m": 1.52,
+      "actual_depth_m": 1.51,
       "water_temperature_c": null,
-      "update_time": "05.04.2026 02:20"
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Durbe, Cīrava",
       "lat": 56.73787,
       "lon": 21.38051,
       "actual_depth_m": 0.77,
-      "water_temperature_c": 5.8,
-      "update_time": "05.04.2026 02:20"
+      "water_temperature_c": 5.5,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Gauja, Carnikava",
       "lat": 57.1336,
       "lon": 24.2833,
-      "actual_depth_m": 1.73,
-      "water_temperature_c": 6.3,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 1.68,
+      "water_temperature_c": 6.2,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Gauja, Sigulda",
       "lat": 57.16536,
       "lon": 24.84172,
       "actual_depth_m": 0.47,
-      "water_temperature_c": 6.3,
-      "update_time": "05.04.2026 02:20"
+      "water_temperature_c": 6.2,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Gauja, Valmiera",
       "lat": 57.53624,
       "lon": 25.42341,
       "actual_depth_m": 0.28,
-      "water_temperature_c": 6.3,
-      "update_time": "05.04.2026 02:20"
+      "water_temperature_c": 6.2,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Gauja, Velēna",
       "lat": 57.24359,
       "lon": 26.36296,
-      "actual_depth_m": 1.32,
-      "water_temperature_c": 5.9,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 1.13,
+      "water_temperature_c": 5.7,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Imula, Pilskalni",
@@ -200,31 +200,31 @@
       "lon": 22.57359,
       "actual_depth_m": -0.11,
       "water_temperature_c": null,
-      "update_time": "05.04.2026 02:20"
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Indrica, Brūnuļi",
       "lat": 55.88833,
       "lon": 27.4525,
-      "actual_depth_m": 0.51,
-      "water_temperature_c": 6.6,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 0.5,
+      "water_temperature_c": 6.1,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Irbe, Vičaki",
       "lat": 57.54819,
       "lon": 21.86289,
-      "actual_depth_m": 1.52,
+      "actual_depth_m": 1.53,
       "water_temperature_c": null,
-      "update_time": "05.04.2026 02:20"
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Ķīšezers, Ķīšezers",
       "lat": 56.99825,
       "lon": 24.22465,
-      "actual_depth_m": 1.7,
+      "actual_depth_m": 1.75,
       "water_temperature_c": null,
-      "update_time": "05.04.2026 02:20"
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Laucesa, Lenderņa",
@@ -232,7 +232,7 @@
       "lon": 26.4975,
       "actual_depth_m": 0.26,
       "water_temperature_c": 5.2,
-      "update_time": "05.04.2026 02:20"
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Lielais Ludzas ezers, Ludza",
@@ -240,55 +240,55 @@
       "lon": 27.72831,
       "actual_depth_m": 3.44,
       "water_temperature_c": 6.8,
-      "update_time": "05.04.2026 02:20"
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Lielā Jugla, Zaķi",
       "lat": 56.97158,
       "lon": 24.48727,
-      "actual_depth_m": 1.21,
-      "water_temperature_c": 6.1,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 1.18,
+      "water_temperature_c": 5.8,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Lielupe, Jelgava",
       "lat": 56.65489,
       "lon": 23.73487,
-      "actual_depth_m": 0.6,
-      "water_temperature_c": 7.7,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 0.62,
+      "water_temperature_c": 7.9,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Lielupe, Kalnciems",
       "lat": 56.79621,
       "lon": 23.62182,
-      "actual_depth_m": 0.52,
-      "water_temperature_c": 7.9,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 0.54,
+      "water_temperature_c": 7.8,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Lielupe, Mežotne",
       "lat": 56.43727,
       "lon": 24.0523,
       "actual_depth_m": 0.79,
-      "water_temperature_c": 6.9,
-      "update_time": "05.04.2026 02:20"
+      "water_temperature_c": 6.7,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Lielupe, Sloka",
       "lat": 56.94268,
       "lon": 23.62286,
-      "actual_depth_m": 0.58,
+      "actual_depth_m": 0.56,
       "water_temperature_c": null,
-      "update_time": "05.04.2026 02:20"
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Lielupe, Staļģene",
       "lat": 56.57369,
       "lon": 23.96858,
-      "actual_depth_m": 1.05,
-      "water_temperature_c": 7.4,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 1.06,
+      "water_temperature_c": 6.9,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Liepājas ezers, Liepājas ezers",
@@ -296,15 +296,15 @@
       "lon": 21.02574,
       "actual_depth_m": 0.24,
       "water_temperature_c": null,
-      "update_time": "05.04.2026 02:20"
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Mazā Jugla, Stariņi",
       "lat": 56.86828,
       "lon": 24.61017,
-      "actual_depth_m": -0.33,
-      "water_temperature_c": 5.8,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": -0.32,
+      "water_temperature_c": 5.5,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Meža upīte, Rucava",
@@ -326,17 +326,17 @@
       "name": "Misa, Lielveisi",
       "lat": 56.77222,
       "lon": 24.05836,
-      "actual_depth_m": 0.62,
-      "water_temperature_c": 7.1,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 0.61,
+      "water_temperature_c": 6.9,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Mīlgrāvis, Rīga",
       "lat": 57.03237,
       "lon": 24.13393,
-      "actual_depth_m": 1.86,
-      "water_temperature_c": 5.1,
-      "update_time": "05.04.2026 02:10"
+      "actual_depth_m": 1.79,
+      "water_temperature_c": 5.9,
+      "update_time": "05.04.2026 05:10"
     },
     {
       "name": "Mūsa, Bauska",
@@ -344,87 +344,87 @@
       "lon": 24.18019,
       "actual_depth_m": 0.52,
       "water_temperature_c": 7.0,
-      "update_time": "05.04.2026 02:20"
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Ogre, Lielpeči",
       "lat": 56.8051,
       "lon": 24.71529,
-      "actual_depth_m": 0.35,
-      "water_temperature_c": 5.8,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 0.32,
+      "water_temperature_c": 5.5,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Ogre, Meņģele",
       "lat": 56.80824,
       "lon": 25.39828,
-      "actual_depth_m": 1.42,
+      "actual_depth_m": 1.3,
       "water_temperature_c": 5.1,
-      "update_time": "05.04.2026 02:20"
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Ogre, Ogre",
       "lat": 56.81261,
       "lon": 24.64165,
-      "actual_depth_m": 0.53,
+      "actual_depth_m": 0.52,
       "water_temperature_c": null,
-      "update_time": "05.04.2026 02:20"
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Oša, Kūlenieki",
       "lat": 56.4037,
       "lon": 26.43438,
-      "actual_depth_m": 0.91,
-      "water_temperature_c": 5.4,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 0.92,
+      "water_temperature_c": 5.1,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Pededze, Litene",
       "lat": 57.201,
       "lon": 27.05032,
-      "actual_depth_m": 1.24,
-      "water_temperature_c": 5.4,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 1.09,
+      "water_temperature_c": 5.2,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Pļaviņu ūdenskrātuve, Pļaviņas",
       "lat": 56.6173,
       "lon": 25.74031,
-      "actual_depth_m": 8.25,
-      "water_temperature_c": 6.7,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 8.22,
+      "water_temperature_c": 6.6,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Pļaviņu ūdenskrātuve, Zeļķi",
       "lat": 56.54952,
       "lon": 25.75953,
-      "actual_depth_m": 3.56,
-      "water_temperature_c": 6.6,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 3.52,
+      "water_temperature_c": 6.5,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Rāznas ezers, Kaunata",
       "lat": 56.32068,
       "lon": 27.51316,
-      "actual_depth_m": 3.28,
-      "water_temperature_c": 5.3,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 3.33,
+      "water_temperature_c": 4.9,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Rēzekne, Griškāni",
       "lat": 56.51155,
       "lon": 27.4363,
-      "actual_depth_m": 0.91,
-      "water_temperature_c": 6.6,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 1.01,
+      "water_temperature_c": 6.1,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Rītupe, Lozdova",
       "lat": 56.79438,
       "lon": 27.71697,
       "actual_depth_m": 1.3,
-      "water_temperature_c": 5.9,
-      "update_time": "05.04.2026 02:20"
+      "water_temperature_c": 5.7,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Rīva, Pievīķi",
@@ -432,47 +432,47 @@
       "lon": 21.4039,
       "actual_depth_m": 0.16,
       "water_temperature_c": null,
-      "update_time": "05.04.2026 02:20"
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Roja, Rojupe",
       "lat": 57.49044,
       "lon": 22.7241,
       "actual_depth_m": 0.36,
-      "water_temperature_c": 5.4,
-      "update_time": "05.04.2026 02:20"
+      "water_temperature_c": 5.2,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Rūja, Vilnīši",
       "lat": 57.90527,
       "lon": 25.29232,
-      "actual_depth_m": 1.08,
+      "actual_depth_m": 1.1,
       "water_temperature_c": null,
-      "update_time": "05.04.2026 02:20"
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Salaca, Lagaste",
       "lat": 57.84668,
       "lon": 24.49032,
       "actual_depth_m": 0.47,
-      "water_temperature_c": 6.1,
-      "update_time": "05.04.2026 02:20"
+      "water_temperature_c": 6.0,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Salaca, Mazsalaca",
       "lat": 57.85736,
       "lon": 25.05245,
       "actual_depth_m": 0.68,
-      "water_temperature_c": 6.7,
-      "update_time": "05.04.2026 02:20"
+      "water_temperature_c": 6.5,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Seda, Oleri",
       "lat": 57.78696,
       "lon": 25.42311,
-      "actual_depth_m": 2.9,
+      "actual_depth_m": 2.91,
       "water_temperature_c": 6.0,
-      "update_time": "05.04.2026 02:10"
+      "update_time": "05.04.2026 05:10"
     },
     {
       "name": "Sventes ezers, Spīdoles",
@@ -480,55 +480,55 @@
       "lon": 26.37267,
       "actual_depth_m": 0.98,
       "water_temperature_c": 3.9,
-      "update_time": "05.04.2026 02:20"
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Svēte, Ūziņi",
       "lat": 56.48045,
       "lon": 23.56335,
-      "actual_depth_m": 0.85,
+      "actual_depth_m": 0.7,
       "water_temperature_c": null,
-      "update_time": "05.04.2026 02:20"
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Tērvete, Bramberģe",
       "lat": 56.58363,
       "lon": 23.56051,
       "actual_depth_m": 0.99,
-      "water_temperature_c": 6.8,
-      "update_time": "05.04.2026 02:20"
+      "water_temperature_c": 6.7,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Tirza, Lejasciems",
       "lat": 57.27565,
       "lon": 26.58016,
-      "actual_depth_m": 1.07,
-      "water_temperature_c": 5.8,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 1.05,
+      "water_temperature_c": 5.7,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Tūlija, Zosēni",
       "lat": 57.13753,
       "lon": 25.90398,
-      "actual_depth_m": 0.34,
-      "water_temperature_c": 3.5,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 0.35,
+      "water_temperature_c": 3.3,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Usmas ezers, Usma",
       "lat": 57.20704,
       "lon": 22.15253,
       "actual_depth_m": 0.63,
-      "water_temperature_c": 5.4,
-      "update_time": "05.04.2026 02:20"
+      "water_temperature_c": 5.2,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Užava, Tērande",
       "lat": 57.09324,
       "lon": 21.58228,
-      "actual_depth_m": 0.43,
-      "water_temperature_c": 5.0,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 0.42,
+      "water_temperature_c": 4.6,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Vaidava, Ape",
@@ -536,47 +536,47 @@
       "lon": 26.70542,
       "actual_depth_m": 1.1,
       "water_temperature_c": null,
-      "update_time": "05.04.2026 02:20"
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Vecpalsa, Vilkzemnieki",
       "lat": 57.46039,
       "lon": 26.32378,
-      "actual_depth_m": 0.44,
-      "water_temperature_c": 4.9,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 0.46,
+      "water_temperature_c": 4.7,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Venta, Alši",
       "lat": 56.49992,
       "lon": 22.06985,
-      "actual_depth_m": 2.21,
-      "water_temperature_c": 6.4,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 2.22,
+      "water_temperature_c": 6.2,
+      "update_time": "05.04.2026 05:10"
     },
     {
       "name": "Venta, Kuldīga",
       "lat": 56.9866,
       "lon": 21.96077,
-      "actual_depth_m": 0.52,
-      "water_temperature_c": 6.2,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 0.51,
+      "water_temperature_c": 6.1,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Venta, Vārdava",
       "lat": 56.42473,
       "lon": 22.20795,
-      "actual_depth_m": 1.41,
-      "water_temperature_c": 6.6,
-      "update_time": "05.04.2026 02:20"
+      "actual_depth_m": 1.37,
+      "water_temperature_c": 6.5,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Venta, Vendzava",
       "lat": 57.1797,
       "lon": 21.67416,
       "actual_depth_m": 0.17,
-      "water_temperature_c": 7.1,
-      "update_time": "05.04.2026 02:20"
+      "water_temperature_c": 6.9,
+      "update_time": "05.04.2026 05:20"
     },
     {
       "name": "Viesīte, Sudrabkalni",
